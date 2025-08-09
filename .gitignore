@@ -2,3 +2,7 @@ __pycache__/
 .venv/
 *.pyc
 .ipynb_checkpoints
+venv/
+*.pyc
+__pycache__/
+.DS_Store
