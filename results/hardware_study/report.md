@@ -16,15 +16,15 @@
 - Mean signed shift of P(class 1): per run [-0.0043]; pooled -0.0043 (95% CI [-0.0066, -0.0019])
 - Qubits [0, 1, 2, 3]; readout error 0.0042-0.0112; two-qubit error 0.0015-0.0032; compiled depth 37, 6 two-qubit gates
 
-## cve on ibm_marrakesh (200 inputs, 1024 shots, 2 run(s), sessions pilot, session1)
+## cve on ibm_marrakesh (200 inputs, 1024 shots, 3 run(s), sessions pilot, session1, session2)
 
 - Ideal accuracy on these inputs: 0.685
-- Accuracy per run (Wilson 95% CI): 0.685 [0.618, 0.745], 0.655 [0.587, 0.717]
-- Flips vs ideal per run: [4, 8]; expected from shot noise alone: 4.43 per run; P(total >= 12) = 0.154
-- Mean signed shift of P(class 1): per run [-0.0063, -0.0053]; pooled -0.0058 (95% CI [-0.0082, -0.0035])
+- Accuracy per run (Wilson 95% CI): 0.685 [0.618, 0.745], 0.655 [0.587, 0.717], 0.700 [0.633, 0.759]
+- Flips vs ideal per run: [4, 8, 7]; expected from shot noise alone: 4.43 per run; P(total >= 19) = 0.0548
+- Mean signed shift of P(class 1): per run [-0.0063, -0.0053, -0.0022]; pooled -0.0046 (95% CI [-0.0067, -0.0026])
 - Run-to-run prediction agreement: 0.960
 - Qubits [0, 1, 2, 3]; readout error 0.0059-0.0239; two-qubit error 0.0022-0.0027; compiled depth 37, 6 two-qubit gates
-- Job IDs: dbov06tt7fqc7388gab0, dbov3ttt7fqc7388gfrg
+- Job IDs: dbov06tt7fqc7388gab0, dbov3ttt7fqc7388gfrg, dbp1pvgou4as73cst2n0
 
 ## sentiment on fake_manila (200 inputs, 1024 shots, 1 run(s), sessions session1)
 

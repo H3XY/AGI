@@ -55,8 +55,8 @@ On sentiment the quantum model is slightly but significantly worse; on CVE it is
 
 ![Hardware study](results/hardware_study/figure.png)
 
-- **Accuracy:** statistically indistinguishable from noise-free simulation. Prediction changes match the exact shot-noise expectation (p = 0.15 for CVE over two runs, 0.37 for sentiment), and repeated runs agree on 96% of predictions.
-- **Bias:** small but real. The device lowers P(class 1) by 0.006 (CVE) and 0.004 (sentiment), with 95% CIs excluding zero.
+- **Accuracy:** statistically indistinguishable from noise-free simulation (CVE 0.685, 0.655 and 0.700 over three runs vs 0.685 noise-free; sentiment 0.730 vs 0.740). Prediction changes are at the edge of the exact shot-noise expectation (19 vs 13.3 expected for CVE over three runs, p = 0.055; p = 0.37 for sentiment), and repeated runs agree on 96% of predictions.
+- **Bias:** small but real. The device lowers P(class 1) by 0.0046 (CVE, three runs) and 0.0035 (sentiment), with 95% CIs excluding zero. Per CVE run it was 0.0063 and 0.0053, then 0.0022 three hours later under the same reported calibration, so its size drifts between sessions.
 - **Noise models:** `FakeMarrakesh` (a snapshot of the same device) reproduces that bias; `FakeManilaV2` (an older 5-qubit device) overstates it about fivefold and changes significantly more predictions than shot noise allows.
 
 Details, job IDs and the calibration snapshot: [results/hardware_study/report.md](results/hardware_study/report.md), [results/ibm_jobs.json](results/ibm_jobs.json). An earlier 40-input run per dataset ([results/benchmark.md](results/benchmark.md), [results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), exact statistics in [results/uncertainty.md](results/uncertainty.md)) is superseded by this study.

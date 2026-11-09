@@ -128,15 +128,17 @@
   "cve/ibm_marrakesh": {
     "inputs": 200,
     "shots": 1024,
-    "runs": 2,
+    "runs": 3,
     "sessions": [
       "pilot",
-      "session1"
+      "session1",
+      "session2"
     ],
     "ideal_accuracy": 0.685,
     "accuracy_per_run": [
       0.685,
-      0.655
+      0.655,
+      0.7
     ],
     "wilson_ci_per_run": [
       [
@@ -146,31 +148,39 @@
       [
         0.5867546071792236,
         0.7174031309860971
+      ],
+      [
+        0.6332080400667355,
+        0.759253557565936
       ]
     ],
     "flips_per_run": [
       4,
-      8
+      8,
+      7
     ],
     "expected_flips_per_run": 4.431096268840678,
-    "p_value_flips": 0.15398656039467576,
+    "p_value_flips": 0.0548336979133444,
     "shift_per_run": [
       -0.006333299999999999,
-      -0.005317700000000003
+      -0.005317700000000003,
+      -0.002207350000000002
     ],
-    "shift_pooled": -0.005825500000000001,
+    "shift_pooled": -0.0046194500000000015,
     "shift_pooled_ci": [
-      -0.00820958875,
-      -0.003511053750000008
+      -0.006744977916666667,
+      -0.002562009166666671
     ],
     "run_to_run_prediction_agreement": 0.96,
     "job_ids": [
       "dbov06tt7fqc7388gab0",
-      "dbov3ttt7fqc7388gfrg"
+      "dbov3ttt7fqc7388gfrg",
+      "dbp1pvgou4as73cst2n0"
     ],
     "finished_utc": [
       "2026-11-09T16:16:17+00:00",
-      "2026-11-09T16:18:11+00:00"
+      "2026-11-09T16:18:11+00:00",
+      "2026-11-09T19:21:59+00:00"
     ],
     "calibration": {
       "physical_qubits": [
