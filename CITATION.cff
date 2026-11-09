@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Quantum text classifier: fair quantum vs classical benchmarks on IBM hardware"
+authors:
+  - family-names: Reddy
+    given-names: Vivek
+repository-code: "https://github.com/H3XY/AGI"
+license: MIT
+date-released: 2026-11-09
+keywords: [quantum machine learning, qiskit, benchmarking, IBM Quantum, CVE]
