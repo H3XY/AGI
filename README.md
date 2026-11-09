@@ -65,8 +65,9 @@ The whole run used about a minute of quantum time over 5 jobs.
 
 Takeaways:
 - The QNN comes within about 0–10 points of classical models, and never clearly beats them.
-- On real hardware, 4 of 5 datasets gave exactly the same answers as the noise-free simulator. The transpiled circuit is shallow: depth 37, 6 two-qubit gates. CVE flipped 3 of 40 answers. Sentiment had just as many borderline predictions and none flipped, so this is most likely shot noise near the 0.5 line rather than a systematic effect. Future runs save per-sample probabilities to check.
-- The local noise model (`FakeManilaV2`, an older 5-qubit device) is more pessimistic than today's hardware.
+- On real hardware, 4 of 5 datasets gave exactly the same answers as the noise-free simulator. The transpiled circuit is shallow: depth 37, 6 two-qubit gates.
+- CVE flipped 3 of 40 answers in that run. A follow-up study reran the same 40 samples 3 more times on `ibm_marrakesh` ([results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), `python -m benchmark.hardware_repeats`). It found 5 flips in total against 3.45 expected from 1,024-shot sampling alone (p ≈ 0.27). No sample flipped in every run, and every flipped sample had an ideal probability within 0.025 of 0.5. **The drop is shot noise, not a hardware bias.** The device's mean shift in P(class 1) was −0.006.
+- The local noise model (`FakeManilaV2`, an older 5-qubit device) is more pessimistic than today's hardware. Its mean shift was −0.030, five times larger, and it flipped 2 samples in every run ([results/hardware_repeats_cve_fake.md](results/hardware_repeats_cve_fake.md)).
 - An earlier design (`ZZFeatureMap`, parity readout, training on sampled shots) barely beat a coin flip. Circuit design matters more than qubit count here.
 
 Full tables: [results/benchmark.md](results/benchmark.md), [results/sentiment.json](results/sentiment.json), [results/cve.json](results/cve.json).
@@ -109,7 +110,8 @@ python -m benchmark.run_benchmark --datasets iris moons
 # Run on IBM Quantum (see ibmq/README_IBMQ.md for credentials)
 python -m ibmq.run_on_ibmq --fake                    # simulated IBM noise, no account needed
 python -m ibmq.run_on_ibmq --task cve "Heap overflow in the TLS parser allows remote code execution"
-python -m benchmark.run_benchmark --hardware          # adds a real-hardware column
+python -m benchmark.run_benchmark --hardware          # adds a real-hardware comparison
+python -m benchmark.hardware_repeats --dataset cve --repeats 3   # shot noise vs device bias
 
 # Scan dependencies for known CVEs (pip-audit)
 ./security/audit_deps.sh
@@ -128,7 +130,7 @@ core/
   cve_data.py             NVD API download and parsing
   text_classifier.py      load a trained model and score text
   agent.py, memory.py     chat agent and session memory
-benchmark/                quantum vs classical benchmark → results/benchmark.*
+benchmark/                quantum vs classical benchmark, hardware repeat study → results/
 ibmq/                     IBM Quantum Runtime scripts and credentials guide
 security/                 dependency CVE scan (pip-audit)
 .github/workflows/        weekly and on-change dependency audit in CI
