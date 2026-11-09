@@ -1,0 +1,316 @@
+{
+  "hardware": {
+    "cve": {
+      "backend": "ibm_marrakesh",
+      "inputs": 40,
+      "shots": 1024,
+      "runs": 3,
+      "expected_flips_per_run_exact": 1.1478499168505898,
+      "observed_flips": 5,
+      "p_value_at_least_observed": 0.24394805961337332,
+      "accuracy_per_run": [
+        0.725,
+        0.675,
+        0.7
+      ],
+      "wilson_ci_per_run": [
+        [
+          0.5716474916687543,
+          0.8389214656685692
+        ],
+        [
+          0.52017458088898,
+          0.7991568303733828
+        ],
+        [
+          0.545696893456796,
+          0.8192532908430471
+        ]
+      ],
+      "ideal_accuracy": 0.725,
+      "mean_signed_shift": -0.00595,
+      "mean_signed_shift_ci": [
+        -0.010431645833333334,
+        -0.0013924166666666677
+      ],
+      "inputs_with_abs_p_minus_half_below_0.05": 7,
+      "including_first_benchmark_run": {
+        "runs": 4,
+        "observed_flips": 8,
+        "expected_flips": 4.591399667402359,
+        "p_value_at_least_observed": 0.06338206692127653
+      }
+    },
+    "cve_fake": {
+      "backend": "fake_manila",
+      "inputs": 40,
+      "shots": 1024,
+      "runs": 3,
+      "expected_flips_per_run_exact": 1.1478499168505898,
+      "observed_flips": 7,
+      "p_value_at_least_observed": 0.03464063171704793,
+      "accuracy_per_run": [
+        0.7,
+        0.675,
+        0.675
+      ],
+      "wilson_ci_per_run": [
+        [
+          0.545696893456796,
+          0.8192532908430471
+        ],
+        [
+          0.52017458088898,
+          0.7991568303733828
+        ],
+        [
+          0.52017458088898,
+          0.7991568303733828
+        ]
+      ],
+      "ideal_accuracy": 0.725,
+      "mean_signed_shift": -0.029773333333333336,
+      "mean_signed_shift_ci": [
+        -0.04029647916666666,
+        -0.019571229166666673
+      ],
+      "inputs_with_abs_p_minus_half_below_0.05": 7
+    }
+  },
+  "text": [
+    {
+      "task": "sentiment",
+      "test_texts": 1066,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "full_embedding": {
+        "Logistic regression, defaults": 0.773921200750469,
+        "Logistic regression, CV-tuned": 0.773921200750469,
+        "CV-tuned C": 1
+      },
+      "per_seed": [
+        {
+          "seed": 0,
+          "seconds": 260.1,
+          "accuracy": {
+            "Quantum (QNN)": 0.7579737335834896,
+            "Logistic regression, defaults": 0.7692307692307693,
+            "Logistic regression, CV-tuned": 0.773921200750469,
+            "SVM (RBF), CV-tuned": 0.7664165103189493
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 0.01
+            },
+            "svm": {
+              "C": 1,
+              "gamma": 0.1
+            }
+          },
+          "bootstrap_ci": {
+            "Quantum (QNN)": [
+              0.7317073170731707,
+              0.7833020637898687
+            ],
+            "Logistic regression, defaults": [
+              0.7429643527204502,
+              0.7954971857410882
+            ],
+            "Logistic regression, CV-tuned": [
+              0.7476547842401501,
+              0.7992729831144464
+            ],
+            "SVM (RBF), CV-tuned": [
+              0.7401500938086304,
+              0.7917448405253283
+            ]
+          },
+          "paired_ci_qnn_minus_logreg_defaults": [
+            -0.027204502814258902,
+            0.005628517823639714
+          ],
+          "paired_ci_qnn_minus_logreg_tuned": [
+            -0.030018761726078758,
+            -0.0018761726078799779
+          ]
+        },
+        {
+          "seed": 1,
+          "seconds": 355.1,
+          "accuracy": {
+            "Quantum (QNN)": 0.7645403377110694,
+            "Logistic regression, defaults": 0.7701688555347092,
+            "Logistic regression, CV-tuned": 0.7720450281425891,
+            "SVM (RBF), CV-tuned": 0.7673545966228893
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 0.01
+            },
+            "svm": {
+              "C": 10,
+              "gamma": 0.1
+            }
+          }
+        },
+        {
+          "seed": 2,
+          "seconds": 550.0,
+          "accuracy": {
+            "Quantum (QNN)": 0.7476547842401501,
+            "Logistic regression, defaults": 0.7701688555347092,
+            "Logistic regression, CV-tuned": 0.7701688555347092,
+            "SVM (RBF), CV-tuned": 0.774859287054409
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 1
+            },
+            "svm": {
+              "C": 0.1,
+              "gamma": 0.1
+            }
+          }
+        }
+      ],
+      "summary": {
+        "Quantum (QNN)": {
+          "mean": 0.7567229518449031,
+          "std": 0.006950003368009037
+        },
+        "Logistic regression, defaults": {
+          "mean": 0.7698561601000625,
+          "std": 0.00044221812456940826
+        },
+        "Logistic regression, CV-tuned": {
+          "mean": 0.7720450281425891,
+          "std": 0.0015318885195642117
+        },
+        "SVM (RBF), CV-tuned": {
+          "mean": 0.7695434646654159,
+          "std": 0.0037783133125686616
+        }
+      }
+    },
+    {
+      "task": "cve",
+      "test_texts": 2424,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "full_embedding": {
+        "Logistic regression, defaults": 0.7145214521452146,
+        "Logistic regression, CV-tuned": 0.7021452145214522,
+        "CV-tuned C": 100
+      },
+      "per_seed": [
+        {
+          "seed": 0,
+          "seconds": 507.0,
+          "accuracy": {
+            "Quantum (QNN)": 0.6988448844884488,
+            "Logistic regression, defaults": 0.6918316831683168,
+            "Logistic regression, CV-tuned": 0.6918316831683168,
+            "SVM (RBF), CV-tuned": 0.7021452145214522
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 1
+            },
+            "svm": {
+              "C": 1,
+              "gamma": "scale"
+            }
+          },
+          "bootstrap_ci": {
+            "Quantum (QNN)": [
+              0.6794554455445545,
+              0.7174092409240924
+            ],
+            "Logistic regression, defaults": [
+              0.6732673267326733,
+              0.7095709570957096
+            ],
+            "Logistic regression, CV-tuned": [
+              0.6732673267326733,
+              0.7095709570957096
+            ],
+            "SVM (RBF), CV-tuned": [
+              0.683993399339934,
+              0.7194719471947195
+            ]
+          },
+          "paired_ci_qnn_minus_logreg_defaults": [
+            -0.00949876237623756,
+            0.02310231023102316
+          ],
+          "paired_ci_qnn_minus_logreg_tuned": [
+            -0.00949876237623756,
+            0.02310231023102316
+          ]
+        },
+        {
+          "seed": 1,
+          "seconds": 145.9,
+          "accuracy": {
+            "Quantum (QNN)": 0.6798679867986799,
+            "Logistic regression, defaults": 0.6881188118811881,
+            "Logistic regression, CV-tuned": 0.691006600660066,
+            "SVM (RBF), CV-tuned": 0.6831683168316832
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 0.1
+            },
+            "svm": {
+              "C": 10,
+              "gamma": 0.1
+            }
+          }
+        },
+        {
+          "seed": 2,
+          "seconds": 240.4,
+          "accuracy": {
+            "Quantum (QNN)": 0.716996699669967,
+            "Logistic regression, defaults": 0.6831683168316832,
+            "Logistic regression, CV-tuned": 0.6831683168316832,
+            "SVM (RBF), CV-tuned": 0.6885313531353136
+          },
+          "tuned_params": {
+            "logreg": {
+              "C": 1
+            },
+            "svm": {
+              "C": 10,
+              "gamma": 0.1
+            }
+          }
+        }
+      ],
+      "summary": {
+        "Quantum (QNN)": {
+          "mean": 0.6985698569856987,
+          "std": 0.015158981055578308
+        },
+        "Logistic regression, defaults": {
+          "mean": 0.6877062706270628,
+          "std": 0.0035488140540604453
+        },
+        "Logistic regression, CV-tuned": {
+          "mean": 0.6886688668866886,
+          "std": 0.0039040345342624496
+        },
+        "SVM (RBF), CV-tuned": {
+          "mean": 0.6912816281628164,
+          "std": 0.007987643416643342
+        }
+      }
+    }
+  ]
+}

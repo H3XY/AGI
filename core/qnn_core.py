@@ -10,9 +10,10 @@ Inputs must already be scaled to [0, pi], one feature per qubit
 (see core/features.py).
 
 Why this design: an earlier version used ZZFeatureMap + parity readout and
-trained on sampled (shot-noisy) probabilities. On the benchmark datasets it
-barely beat a coin flip. Plain angle encoding, re-uploading the input before
-every trainable layer, and training on exact probabilities fixed that.
+trained on sampled (shot-noisy) probabilities, and scored about 0.69 on breast
+cancer. A one-factor ablation (benchmark/ablation.py) shows the encoding was
+the cause: ZZFeatureMap alone costs ~21 points, while re-uploading, readout,
+optimizer and exact vs sampled training each move accuracy by at most ~2 points.
 """
 import warnings
 
