@@ -109,10 +109,16 @@ def run_dataset(name, args, hardware_backend=None):
     if hardware_backend is not None:
         n = min(args.hardware_samples, len(y_te))
         hw = runtime_qnn(hardware_backend, num_qubits, args.reps, args.shots)
+        p_ideal = predict_proba(qnn, A_te[:n], weights)
+        p_hw = predict_proba(hw, A_te[:n], weights)
         row["hardware"] = {
             "backend": hardware_backend.name, "samples": int(n), "shots": args.shots,
-            "ideal": accuracy(y_te[:n], predict_proba(qnn, A_te[:n], weights)),
-            "hardware": accuracy(y_te[:n], predict_proba(hw, A_te[:n], weights)),
+            "ideal": accuracy(y_te[:n], p_ideal),
+            "hardware": accuracy(y_te[:n], p_hw),
+            # per-sample P(class 1), to see which answers noise flipped and by how much
+            "labels": [int(v) for v in y_te[:n]],
+            "p_ideal": [round(float(v), 4) for v in p_ideal],
+            "p_hardware": [round(float(v), 4) for v in p_hw],
         }
 
     for k, v in row["accuracy"].items():
@@ -146,9 +152,9 @@ def write_markdown(rows, path):
             h = r["hardware"]
             lines.append(f"| {r['dataset']} | {h['backend']} | {h['samples']} | {h['ideal']:.3f} | "
                          f"{h['hardware']:.3f} | {h['hardware'] - h['ideal']:+.3f} |")
-        n = hw_rows[0]["hardware"]["samples"]
-        lines += ["", f"With {n} samples, one sample is {1 / n:.3f} of accuracy, so differences of a "
-                  "few samples are within noise."]
+        n = max(r["hardware"]["samples"] for r in hw_rows)
+        lines += ["", f"With {n} samples, one sample is {1 / n:.3f} of accuracy, so a difference of "
+                  "one or two samples can come from shot noise alone."]
     with open(path, "w") as f:
         f.write("\n".join(lines) + "\n")
 
@@ -180,7 +186,7 @@ def write_hardware_chart(rows, path):
     ax.set_xticklabels([f"{r['dataset']}\n({r['qubits']} qubits)" for r in rows], color=text_primary, fontsize=9)
     ax.set_ylim(0, 1.08)
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-    ax.set_ylabel(f"Accuracy on the same {n} test samples", color=text_secondary, fontsize=9)
+    ax.set_ylabel(f"Accuracy on the same test samples (up to {n})", color=text_secondary, fontsize=9)
     ax.tick_params(axis="y", colors=text_secondary, labelsize=8)
     ax.tick_params(axis="x", length=0)
     ax.grid(axis="y", color=grid, linewidth=0.8, zorder=0)

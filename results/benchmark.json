@@ -9,10 +9,17 @@
       "Logistic regression": 0.9473684210526315,
       "SVM (RBF)": 0.9415204678362573,
       "Quantum (ideal sim)": 0.9181286549707602,
-      "Quantum (noisy IBM sim)": 0.9005847953216374
+      "Quantum (noisy IBM sim)": 0.9122807017543859
     },
-    "train_seconds": 80.1,
-    "final_loss": 0.38025563477186486
+    "train_seconds": 85.9,
+    "final_loss": 0.38025563477186486,
+    "hardware": {
+      "backend": "ibm_marrakesh",
+      "samples": 40,
+      "shots": 1024,
+      "ideal": 0.875,
+      "hardware": 0.875
+    }
   },
   {
     "dataset": "iris",
@@ -26,8 +33,15 @@
       "Quantum (ideal sim)": 0.9,
       "Quantum (noisy IBM sim)": 0.8666666666666667
     },
-    "train_seconds": 37.8,
-    "final_loss": 0.44683896805299544
+    "train_seconds": 38.9,
+    "final_loss": 0.44683896805299544,
+    "hardware": {
+      "backend": "ibm_marrakesh",
+      "samples": 30,
+      "shots": 1024,
+      "ideal": 0.9,
+      "hardware": 0.9
+    }
   },
   {
     "dataset": "moons",
@@ -39,10 +53,17 @@
       "Logistic regression": 0.8,
       "SVM (RBF)": 0.9555555555555556,
       "Quantum (ideal sim)": 0.8444444444444444,
-      "Quantum (noisy IBM sim)": 0.8333333333333334
+      "Quantum (noisy IBM sim)": 0.8444444444444444
     },
-    "train_seconds": 18.4,
-    "final_loss": 0.46399294457449114
+    "train_seconds": 22.4,
+    "final_loss": 0.46399294457449114,
+    "hardware": {
+      "backend": "ibm_marrakesh",
+      "samples": 40,
+      "shots": 1024,
+      "ideal": 0.9,
+      "hardware": 0.9
+    }
   },
   {
     "dataset": "sentiment",
@@ -54,10 +75,17 @@
       "Logistic regression": 0.765,
       "SVM (RBF)": 0.75,
       "Quantum (ideal sim)": 0.725,
-      "Quantum (noisy IBM sim)": 0.735
+      "Quantum (noisy IBM sim)": 0.725
     },
-    "train_seconds": 71.3,
-    "final_loss": 0.7744817486501017
+    "train_seconds": 80.0,
+    "final_loss": 0.7744817486501017,
+    "hardware": {
+      "backend": "ibm_marrakesh",
+      "samples": 40,
+      "shots": 1024,
+      "ideal": 0.675,
+      "hardware": 0.675
+    }
   },
   {
     "dataset": "cve",
@@ -69,9 +97,16 @@
       "Logistic regression": 0.695,
       "SVM (RBF)": 0.7,
       "Quantum (ideal sim)": 0.685,
-      "Quantum (noisy IBM sim)": 0.7
+      "Quantum (noisy IBM sim)": 0.69
     },
-    "train_seconds": 265.1,
-    "final_loss": 0.75079734379475
+    "train_seconds": 389.1,
+    "final_loss": 0.75079734379475,
+    "hardware": {
+      "backend": "ibm_marrakesh",
+      "samples": 40,
+      "shots": 1024,
+      "ideal": 0.725,
+      "hardware": 0.65
+    }
   }
 ]

@@ -47,9 +47,26 @@ against classical models on the same reduced features:
 
 ![Quantum vs classical benchmark](results/benchmark.png)
 
+**Real quantum hardware** (`--hardware`, IBM `ibm_marrakesh`, 156-qubit Heron
+processor, 1,024 shots). The same trained weights on the same 40 test samples
+(30 for iris), compared with the ideal simulator:
+
+![Real hardware vs ideal simulator](results/benchmark_hardware.png)
+
+| Dataset | Ideal sim | ibm_marrakesh |
+|---|---|---|
+| breast_cancer | 0.875 | 0.875 |
+| iris | 0.900 | 0.900 |
+| moons | 0.900 | 0.900 |
+| sentiment | 0.675 | 0.675 |
+| cve | 0.725 | 0.650 |
+
+The whole run used about a minute of quantum time over 5 jobs.
+
 Takeaways:
 - The QNN comes within about 0–10 points of classical models, and never clearly beats them.
-- Simulated IBM noise costs about 0–3 points at this circuit size. Small gains on noisy runs are random variation on small test sets.
+- On real hardware, 4 of 5 datasets gave exactly the same answers as the noise-free simulator. The transpiled circuit is shallow: depth 37, 6 two-qubit gates. CVE flipped 3 of 40 answers. Sentiment had just as many borderline predictions and none flipped, so this is most likely shot noise near the 0.5 line rather than a systematic effect. Future runs save per-sample probabilities to check.
+- The local noise model (`FakeManilaV2`, an older 5-qubit device) is more pessimistic than today's hardware.
 - An earlier design (`ZZFeatureMap`, parity readout, training on sampled shots) barely beat a coin flip. Circuit design matters more than qubit count here.
 
 Full tables: [results/benchmark.md](results/benchmark.md), [results/sentiment.json](results/sentiment.json), [results/cve.json](results/cve.json).
