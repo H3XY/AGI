@@ -9,6 +9,8 @@ train/test split and the initial weights.
   final              angle encoding, re-uploaded x2, qubit-0 readout, exact, L-BFGS-B
   zz-encoding        ZZFeatureMap (once) + RealAmplitudes(reps=2), rest as final
   no-reupload        angle encoding once + RealAmplitudes(reps=2), rest as final
+  zz-reupload        ZZFeatureMap re-uploaded x2, rest as final (with zz-encoding and
+                     no-reupload, completes a 2x2 factorial of encoding x re-uploading)
   parity-readout     parity of all qubits instead of qubit 0
   cobyla             exact probabilities, but COBYLA instead of L-BFGS-B
   sampled-training   1,024-shot sampled probabilities, COBYLA (L-BFGS-B needs exact gradients)
@@ -16,6 +18,7 @@ train/test split and the initial weights.
   2-qubits / 6-qubits  final design with 2 or 6 PCA features
 
 Usage:  python -m benchmark.ablation        (~20 min, CPU only)
+        python -m benchmark.ablation --variants zz-reupload   (run some variants, merge into the saved results)
 Writes results/ablation.json and results/ablation.md.
 """
 import json
@@ -44,6 +47,7 @@ VARIANTS = {
     "final":            dict(enc="angle", reupload=True,  readout="q0",     training="exact",   opt="lbfgs", n=4),
     "zz-encoding":      dict(enc="zz",    reupload=False, readout="q0",     training="exact",   opt="lbfgs", n=4),
     "no-reupload":      dict(enc="angle", reupload=False, readout="q0",     training="exact",   opt="lbfgs", n=4),
+    "zz-reupload":      dict(enc="zz",    reupload=True,  readout="q0",     training="exact",   opt="lbfgs", n=4),
     "parity-readout":   dict(enc="angle", reupload=True,  readout="parity", training="exact",   opt="lbfgs", n=4),
     "cobyla":           dict(enc="angle", reupload=True,  readout="q0",     training="exact",   opt="cobyla", n=4),
     "sampled-training": dict(enc="angle", reupload=True,  readout="q0",     training="sampled", opt="cobyla", n=4),
@@ -96,8 +100,18 @@ def run(name, v, seed):
 
 
 def main():
+    import argparse
+    a = argparse.ArgumentParser()
+    a.add_argument("--variants", nargs="+", default=list(VARIANTS))
+    args = a.parse_args()
+    path = os.path.join(RESULTS_DIR, "ablation.json")
+    saved = json.load(open(path)) if os.path.exists(path) and set(args.variants) != set(VARIANTS) else {}
     out = {}
     for name, v in VARIANTS.items():
+        if name not in args.variants:
+            if name in saved:
+                out[name] = saved[name]
+            continue
         t0 = time.time()
         accs = [run(name, v, s) for s in SEEDS]
         out[name] = {"config": v, "accuracy_per_seed": accs, "mean": float(np.mean(accs)),

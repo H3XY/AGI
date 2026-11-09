@@ -53,6 +53,24 @@
     "std": 0.015348943224194571,
     "seconds": 140.4
   },
+  "zz-reupload": {
+    "config": {
+      "enc": "zz",
+      "reupload": true,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.6140350877192983,
+      0.7368421052631579,
+      0.6491228070175439
+    ],
+    "mean": 0.6666666666666666,
+    "std": 0.05164772436449031,
+    "seconds": 1548.2
+  },
   "parity-readout": {
     "config": {
       "enc": "angle",

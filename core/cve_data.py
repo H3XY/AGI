@@ -21,6 +21,9 @@ DATA_DIR = os.path.join(ROOT, "data")
 PARQUET = os.path.join(DATA_DIR, "nvd_cves_2024.parquet")
 API = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 WINDOW = ("2024-01-01T00:00:00.000", "2024-04-29T23:59:59.999")  # NVD max window: 120 days
+# Untouched confirmatory set: CVEs published after the train/test window, never used for design.
+HOLDOUT_WINDOW = ("2024-05-01T00:00:00.000", "2024-08-28T23:59:59.999")
+HOLDOUT_PARQUET = os.path.join(DATA_DIR, "nvd_cves_2024_holdout.parquet")
 PAGE = 2000
 
 
@@ -53,7 +56,7 @@ def _parse(item):
             "score": float(m["baseScore"]), "severity": m["baseSeverity"]}
 
 
-def download(window=WINDOW):
+def download(window=WINDOW, path=PARQUET):
     import pandas as pd
     os.makedirs(DATA_DIR, exist_ok=True)
     rows, start, total = [], 0, None
@@ -67,8 +70,8 @@ def download(window=WINDOW):
         if start < total:
             time.sleep(6)  # NVD asks for <= 5 requests / 30 s without an API key
     df = pd.DataFrame(rows).sort_values("published").reset_index(drop=True)
-    df.to_parquet(PARQUET, index=False)
-    print(f"Saved {len(df)} CVEs with CVSS v3.1 scores to {PARQUET}")
+    df.to_parquet(path, index=False)
+    print(f"Saved {len(df)} CVEs with CVSS v3.1 scores to {path}")
     return df
 
 
@@ -81,7 +84,14 @@ def load_cves():
 
 
 def load_cve_split(split="train"):
-    """Descriptions and labels (1 = HIGH/CRITICAL) for the time-based split."""
+    """Descriptions and labels (1 = HIGH/CRITICAL) for the time-based split.
+
+    split = "train" | "test" (80/20 by date, Jan-Apr 2024) | "holdout" (May-Aug 2024,
+    the confirmatory set; see results/confirmatory/PROTOCOL.md)."""
+    if split == "holdout":
+        import pandas as pd
+        df = pd.read_parquet(HOLDOUT_PARQUET) if os.path.exists(HOLDOUT_PARQUET) else download(HOLDOUT_WINDOW, HOLDOUT_PARQUET)
+        return df["description"].tolist(), (df["score"].to_numpy() >= 7.0).astype(int)
     df = load_cves()
     cut = int(len(df) * 0.8)
     part = df.iloc[:cut] if split == "train" else df.iloc[cut:]
