@@ -1,8 +1,15 @@
+# Python
 __pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Virtual environments
 .venv/
-*.pyc
-.ipynb_checkpoints
 venv/
-*.pyc
-__pycache__/
+venv*/
+
+# Downloaded dataset and cached embeddings (recreated by train_sentiment.py)
+data/
+
+# macOS
 .DS_Store
