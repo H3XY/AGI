@@ -1,4 +1,12 @@
-qiskit==0.45.3
-qiskit-ibmq-provider
-qiskit-machine-learning
+# Python 3.11+ (developed on 3.12)
+qiskit>=1.4,<2            # the exact training sampler is removed in Qiskit 2
+qiskit-aer>=0.17
+qiskit-machine-learning>=0.8
+qiskit-ibm-runtime>=0.40
 numpy
+scikit-learn
+pandas
+pyarrow
+matplotlib
+joblib
+sentence-transformers

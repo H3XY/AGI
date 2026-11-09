@@ -1,0 +1,77 @@
+[
+  {
+    "dataset": "breast_cancer",
+    "description": "Breast cancer (malignant vs benign), 569 samples, 30 features",
+    "qubits": 4,
+    "train_samples": 300,
+    "test_samples": 171,
+    "accuracy": {
+      "Logistic regression": 0.9473684210526315,
+      "SVM (RBF)": 0.9415204678362573,
+      "Quantum (ideal sim)": 0.9181286549707602,
+      "Quantum (noisy IBM sim)": 0.9005847953216374
+    },
+    "train_seconds": 80.1,
+    "final_loss": 0.38025563477186486
+  },
+  {
+    "dataset": "iris",
+    "description": "Iris (versicolor vs virginica), 100 samples, 4 features",
+    "qubits": 4,
+    "train_samples": 70,
+    "test_samples": 30,
+    "accuracy": {
+      "Logistic regression": 1.0,
+      "SVM (RBF)": 1.0,
+      "Quantum (ideal sim)": 0.9,
+      "Quantum (noisy IBM sim)": 0.8666666666666667
+    },
+    "train_seconds": 37.8,
+    "final_loss": 0.44683896805299544
+  },
+  {
+    "dataset": "moons",
+    "description": "Two moons (synthetic), 300 samples, 2 features",
+    "qubits": 2,
+    "train_samples": 210,
+    "test_samples": 90,
+    "accuracy": {
+      "Logistic regression": 0.8,
+      "SVM (RBF)": 0.9555555555555556,
+      "Quantum (ideal sim)": 0.8444444444444444,
+      "Quantum (noisy IBM sim)": 0.8333333333333334
+    },
+    "train_seconds": 18.4,
+    "final_loss": 0.46399294457449114
+  },
+  {
+    "dataset": "sentiment",
+    "description": "Movie-review sentiment (positive vs negative); reducer fitted on 8530 training texts, 384-dim embeddings",
+    "qubits": 4,
+    "train_samples": 300,
+    "test_samples": 200,
+    "accuracy": {
+      "Logistic regression": 0.765,
+      "SVM (RBF)": 0.75,
+      "Quantum (ideal sim)": 0.725,
+      "Quantum (noisy IBM sim)": 0.735
+    },
+    "train_seconds": 71.3,
+    "final_loss": 0.7744817486501017
+  },
+  {
+    "dataset": "cve",
+    "description": "CVE severity from description (HIGH/CRITICAL vs LOW/MEDIUM); reducer fitted on 9692 training texts, 384-dim embeddings",
+    "qubits": 4,
+    "train_samples": 300,
+    "test_samples": 200,
+    "accuracy": {
+      "Logistic regression": 0.695,
+      "SVM (RBF)": 0.7,
+      "Quantum (ideal sim)": 0.685,
+      "Quantum (noisy IBM sim)": 0.7
+    },
+    "train_seconds": 265.1,
+    "final_loss": 0.75079734379475
+  }
+]

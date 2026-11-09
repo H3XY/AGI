@@ -1,25 +1,67 @@
-from core.qnn_core import build_qnn, predict_with_qnn
-from core.agent import QuantumAGIAgent
-from modules.perception import simple_text_preprocess
-import numpy as np
+"""Chat with a quantum text classifier.
 
-qnn = build_qnn()
-default_weights = np.zeros(qnn.num_weights)  # zeros since no training yet
+    python run.py                 # sentiment: is this opinion positive or negative?
+    python run.py --task cve      # CVE severity: paste a vulnerability description
 
-agent = QuantumAGIAgent(qnn)
+The trained 4-qubit QNN runs on a local quantum simulator.
+Commands while chatting:  /summary  /exit
+"""
+import argparse
+import os
+import warnings
 
-print("Quantum AGI Prototype Ready. Type 'exit' to quit.")
+warnings.filterwarnings("ignore")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
-while True:
-    user_input = input("You: ")
-    if user_input.lower() == "exit":
-        break
+from core.agent import QuantumAgent  # noqa: E402
+from core.text_classifier import TextClassifier  # noqa: E402
+from core.text_tasks import TASKS  # noqa: E402
 
-    processed = simple_text_preprocess(user_input)
-    encoded = agent.perceive(processed)
-    decision = agent.reason(encoded)
+PROMPTS = {
+    "sentiment": "Type an opinion (movie-review style works best)",
+    "cve": "Paste a vulnerability description",
+}
 
-    response_val = predict_with_qnn(qnn, encoded, weights=default_weights)
-    response = agent.act(decision, qnn_output=response_val)
-    print("AGI:", response)
-    agent.reflect(user_input, decision)
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--task", choices=list(TASKS), default="sentiment")
+    args = p.parse_args()
+
+    try:
+        model = TextClassifier(args.task)
+    except FileNotFoundError as e:
+        raise SystemExit(str(e))
+
+    print("Loading text encoder...")
+    model.encode(["warm-up"])  # loads the embedding model once, up front
+    agent = QuantumAgent(model)
+
+    acc = model.metrics.get("Quantum (ideal sim)")
+    print(f"\n{TASKS[args.task]['description']}: {model.num_qubits}-qubit classifier ready"
+          + (f" ({acc:.0%} test accuracy)" if acc else "") + ".")
+    print(f"{PROMPTS[args.task]}, /summary for session stats, /exit to quit.\n")
+
+    while True:
+        try:
+            text = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+        if not text:
+            continue
+        if text.lower() in ("/exit", "exit", "quit"):
+            break
+        if text.lower() == "/summary":
+            print("AGI:", agent.summary())
+            continue
+
+        p1 = agent.reason(agent.perceive(text))
+        print("AGI:", agent.act(p1))
+        agent.reflect(text, p1)
+
+    print(agent.summary())
+
+
+if __name__ == "__main__":
+    main()
