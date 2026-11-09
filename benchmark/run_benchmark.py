@@ -4,14 +4,16 @@ For each dataset: reduce features to one per qubit, train the QNN on an ideal
 simulator, then measure test accuracy for
   - Quantum (ideal sim)       : the trained QNN on a noiseless simulator
   - Quantum (noisy IBM sim)   : the SAME trained weights on a simulated IBM device with realistic noise
-  - Quantum (IBM hardware)    : optional, --hardware, needs IBM credentials
+  - Quantum (IBM hardware)    : optional, --hardware, needs IBM credentials. Runs on a
+                                subset of the test set (quota), so it is reported in its own
+                                table/chart next to the ideal simulator on the SAME samples.
   - Logistic regression / SVM : classical models on the SAME reduced features
 
 Usage (from the repo root):
     python -m benchmark.run_benchmark                      # all datasets (~10 min)
     python -m benchmark.run_benchmark --datasets sentiment cve
     python -m benchmark.run_benchmark --hardware --hardware-samples 40
-Writes results/benchmark.{json,md,png}.
+Writes results/benchmark.{json,md,png} (+ results/benchmark_hardware.png with --hardware).
 """
 import argparse
 import json
@@ -34,8 +36,8 @@ MODELS = [  # display order = fixed colour order in the chart
     "Quantum (noisy IBM sim)",
     "Logistic regression",
     "SVM (RBF)",
-    "Quantum (IBM hardware)",
 ]
+HARDWARE_COLOR, IDEAL_COLOR = "#e87ba4", "#2a78d6"
 
 
 def accuracy(y_true, p_class1):
@@ -102,16 +104,23 @@ def run_dataset(name, args, hardware_backend=None):
         noisy = runtime_qnn(FakeManilaV2(), num_qubits, args.reps, args.shots)
         row["accuracy"]["Quantum (noisy IBM sim)"] = accuracy(y_te, predict_proba(noisy, A_te, weights))
 
-    # Same weights on real hardware (subset, to save quota)
+    # Same weights on real hardware (subset, to save quota), compared with the
+    # ideal simulator on exactly the same samples.
     if hardware_backend is not None:
-        n = args.hardware_samples
+        n = min(args.hardware_samples, len(y_te))
         hw = runtime_qnn(hardware_backend, num_qubits, args.reps, args.shots)
-        row["accuracy"]["Quantum (IBM hardware)"] = accuracy(y_te[:n], predict_proba(hw, A_te[:n], weights))
-        row["hardware_backend"] = hardware_backend.name
-        row["hardware_samples"] = int(min(n, len(y_te)))
+        row["hardware"] = {
+            "backend": hardware_backend.name, "samples": int(n), "shots": args.shots,
+            "ideal": accuracy(y_te[:n], predict_proba(qnn, A_te[:n], weights)),
+            "hardware": accuracy(y_te[:n], predict_proba(hw, A_te[:n], weights)),
+        }
 
     for k, v in row["accuracy"].items():
         print(f"  {k:26s} {v:.3f}")
+    if "hardware" in row:
+        h = row["hardware"]
+        print(f"  On the first {h['samples']} test samples: ideal sim {h['ideal']:.3f}, "
+              f"{h['backend']} {h['hardware']:.3f}")
     return row
 
 
@@ -125,13 +134,66 @@ def write_markdown(rows, path):
         cells = [f"{r['accuracy'][m]:.3f}" if m in r["accuracy"] else "-" for m in present]
         lines.append(f"| {r['dataset']} | {r['qubits']} | {r['train_samples']} / {r['test_samples']} | "
                      + " | ".join(cells) + " |")
-    if any("hardware_backend" in r for r in rows):
-        lines += ["", "IBM hardware accuracy uses the first "
-                  f"{rows[0].get('hardware_samples')} test samples only."]
     lines += ["", "Noisy IBM sim = the ideal-trained weights run on `FakeManilaV2` "
               "(a local simulation of a 5-qubit IBM device's noise)."]
+    hw_rows = [r for r in rows if "hardware" in r]
+    if hw_rows:
+        lines += ["", "## Real IBM hardware", "",
+                  "Same trained weights, same test samples (a subset, to save quantum time).", "",
+                  "| Dataset | Device | Samples | Quantum (ideal sim) | Quantum (IBM hardware) | Difference |",
+                  "|---|---|---|---|---|---|"]
+        for r in hw_rows:
+            h = r["hardware"]
+            lines.append(f"| {r['dataset']} | {h['backend']} | {h['samples']} | {h['ideal']:.3f} | "
+                         f"{h['hardware']:.3f} | {h['hardware'] - h['ideal']:+.3f} |")
+        n = hw_rows[0]["hardware"]["samples"]
+        lines += ["", f"With {n} samples, one sample is {1 / n:.3f} of accuracy, so differences of a "
+                  "few samples are within noise."]
     with open(path, "w") as f:
         f.write("\n".join(lines) + "\n")
+
+
+def write_hardware_chart(rows, path):
+    """Ideal simulator vs real IBM hardware on the same test samples."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    rows = [r for r in rows if "hardware" in r]
+    text_primary, text_secondary, surface, grid = "#0b0b0b", "#52514e", "#fcfcfb", "#e4e3df"
+    backend, n = rows[0]["hardware"]["backend"], rows[0]["hardware"]["samples"]
+    series = [("Quantum (ideal sim)", "ideal", IDEAL_COLOR),
+              (f"Quantum ({backend})", "hardware", HARDWARE_COLOR)]
+    fig, ax = plt.subplots(figsize=(max(6, 1.7 * len(rows) + 2), 4.2), dpi=160)
+    fig.patch.set_facecolor(surface)
+    ax.set_facecolor(surface)
+    width = 0.36
+    for j, (label, key, color) in enumerate(series):
+        xs = [i - 0.2 + width * j + 0.02 for i in range(len(rows))]
+        vals = [r["hardware"][key] for r in rows]
+        bars = ax.bar(xs, vals, width=width * 0.9, color=color, label=label, zorder=3)
+        for b, v in zip(bars, vals):
+            ax.text(b.get_x() + b.get_width() / 2, v + 0.012, f"{v:.2f}", ha="center",
+                    va="bottom", fontsize=7, color=text_secondary)
+    ax.axhline(0.5, color=text_secondary, linewidth=1, linestyle=(0, (4, 3)), zorder=2)
+    ax.set_xticks(range(len(rows)))
+    ax.set_xticklabels([f"{r['dataset']}\n({r['qubits']} qubits)" for r in rows], color=text_primary, fontsize=9)
+    ax.set_ylim(0, 1.08)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_ylabel(f"Accuracy on the same {n} test samples", color=text_secondary, fontsize=9)
+    ax.tick_params(axis="y", colors=text_secondary, labelsize=8)
+    ax.tick_params(axis="x", length=0)
+    ax.grid(axis="y", color=grid, linewidth=0.8, zorder=0)
+    for s in ["top", "right", "left"]:
+        ax.spines[s].set_visible(False)
+    ax.spines["bottom"].set_color(grid)
+    ax.set_title(f"Real quantum hardware vs ideal simulator ({backend})", loc="left",
+                 color=text_primary, fontsize=11, pad=24)
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, frameon=False,
+              fontsize=8, labelcolor=text_primary, handlelength=1, borderaxespad=0.2)
+    fig.tight_layout()
+    fig.savefig(path, facecolor=surface)
+    plt.close(fig)
 
 
 def write_chart(rows, path):
@@ -213,6 +275,8 @@ def main():
         json.dump(rows, f, indent=2)
     write_markdown(rows, base + ".md")
     write_chart(rows, base + ".png")
+    if any("hardware" in r for r in rows):
+        write_hardware_chart(rows, base + "_hardware.png")
     print(f"\nWrote {base}.json, {base}.md, {base}.png")
 
 
