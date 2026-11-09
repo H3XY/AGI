@@ -43,9 +43,11 @@ All numbers below are in `results/`. The paper ([H3XY/HonestQML-paper](https://g
 | Logistic regression, full embedding, all data | 0.774 | 0.715 |
 | Paired 95% CI, quantum minus tuned logistic regression | −0.030 to −0.002 | −0.009 to +0.023 |
 
-On sentiment the quantum model is slightly but significantly worse; on CVE it is a statistical tie. CVEs are split by publication date (training up to 9 April 2024, 50% high/critical; test after, 42%), so the model is tested on later CVEs.
+These test sets were used while designing the circuit, so the numbers above are exploratory (on them, sentiment looked 1.5 points worse and CVE a tie). CVEs are split by publication date (training up to 9 April 2024, 50% high/critical; test after, 42%), so the model is tested on later CVEs.
 
-**Which design choice mattered** (`python -m benchmark.ablation`, breast cancer, 3 seeds): changing the encoding to `ZZFeatureMap` drops accuracy from 0.910 to 0.700; every other choice (re-uploading, readout, optimizer, exact vs sampled training, 2 to 6 qubits) moves it by at most 2.3 points. [results/ablation.md](results/ablation.md)
+**Pre-registered confirmatory test** (`python -m benchmark.confirmatory`; protocol [results/confirmatory/PROTOCOL.md](results/confirmatory/PROTOCOL.md), committed before the data was downloaded): frozen system, scored once on untouched data (Rotten Tomatoes validation split; 13,432 NVD CVEs published May-Aug 2024). Sentiment: QNN 0.766 vs tuned logistic regression 0.769, difference -0.003 [-0.017, +0.011], so the expected gap was **not** confirmed. CVE: 0.708 vs 0.720, difference -0.011 [-0.024, +0.003], a tie within the pre-set +/-3-point margin; the tuned SVM (0.726) is 1.8 points ahead of the QNN. The QNN is not ahead of any baseline. [results/confirmatory/confirmatory.md](results/confirmatory/confirmatory.md)
+
+**Which design choice mattered** (`python -m benchmark.ablation`, breast cancer, 3 seeds): in a 2x2 of encoding and re-uploading, `ZZFeatureMap` costs 24 points with re-uploading (0.910 to 0.667) and 19 without (0.887 to 0.700); re-uploading adds 2.3 points to angle encoding. Every other single choice (readout, optimizer, exact vs sampled training, 2 or 6 qubits) moves accuracy by at most 1.4 points. [results/ablation.md](results/ablation.md)
 
 **Benchmark on smaller splits** (`python -m benchmark.run_benchmark`): one seed, 300 training and up to 200 test items, PCA for tabular data. The text-task numbers above supersede the text bars here.
 
@@ -55,8 +57,8 @@ On sentiment the quantum model is slightly but significantly worse; on CVE it is
 
 ![Hardware study](results/hardware_study/figure.png)
 
-- **Accuracy:** statistically indistinguishable from noise-free simulation (CVE 0.685, 0.655 and 0.700 over three runs vs 0.685 noise-free; sentiment 0.730 vs 0.740). Prediction changes are at the edge of the exact shot-noise expectation (19 vs 13.3 expected for CVE over three runs, p = 0.055; p = 0.37 for sentiment), and repeated runs agree on 96% of predictions.
-- **Bias:** small but real. The device lowers P(class 1) by 0.0046 (CVE, three runs) and 0.0035 (sentiment), with 95% CIs excluding zero. Per CVE run it was 0.0063 and 0.0053, then 0.0022 three hours later under the same reported calibration, so its size drifts between sessions.
+- **Accuracy:** no run differs significantly from noise-free simulation on the same inputs (exact McNemar p = 1, 0.07, 0.45 for CVE; 0.63 for sentiment) (CVE 0.685, 0.655 and 0.700 over three runs vs 0.685 noise-free; sentiment 0.730 vs 0.740). Prediction changes are at the edge of the exact shot-noise expectation (19 vs 13.3 expected for CVE over three runs, p = 0.055; p = 0.37 for sentiment), and repeated runs agree on 96% of predictions.
+- **Bias:** consistent in sign, varying in size. The device lowers mean P(class 1) in every run: per CVE run 0.0063 [0.0037, 0.0090] and 0.0053 [0.0025, 0.0081], then 0.0022 [-0.0002, 0.0046] three hours later under the same reported calibration (interval includes zero); pooled 0.0046 (two-level CI over runs and inputs [0.0016, 0.0076]). Sentiment: 0.0035 [0.0010, 0.0061].
 - **Noise models:** `FakeMarrakesh` (a snapshot of the same device) reproduces that bias; `FakeManilaV2` (an older 5-qubit device) overstates it about fivefold and changes significantly more predictions than shot noise allows.
 
 Details, job IDs and the calibration snapshot: [results/hardware_study/report.md](results/hardware_study/report.md), [results/ibm_jobs.json](results/ibm_jobs.json). An earlier 40-input run per dataset ([results/benchmark.md](results/benchmark.md), [results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), exact statistics in [results/uncertainty.md](results/uncertainty.md)) is superseded by this study.
@@ -105,6 +107,7 @@ python -m benchmark.hardware_study --runs 3            # real device; checks the
 python -m benchmark.hardware_study_report && python -m benchmark.hardware_study_figure
 python -m benchmark.uncertainty                        # seeds, tuned baselines, CIs (~40 min, CPU)
 python -m benchmark.ablation                           # circuit-design ablation (~20 min, CPU)
+python -m benchmark.confirmatory                       # pre-registered test on untouched data (~45 min, CPU)
 
 # Scan dependencies for known CVEs (pip-audit)
 ./security/audit_deps.sh
