@@ -1,0 +1,164 @@
+{
+  "final": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.9181286549707602,
+      0.8947368421052632,
+      0.9181286549707602
+    ],
+    "mean": 0.9103313840155945,
+    "std": 0.011027006334293137,
+    "seconds": 267.9
+  },
+  "zz-encoding": {
+    "config": {
+      "enc": "zz",
+      "reupload": false,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.6900584795321637,
+      0.6666666666666666,
+      0.7426900584795322
+    ],
+    "mean": 0.6998050682261209,
+    "std": 0.03179241019551677,
+    "seconds": 413.8
+  },
+  "no-reupload": {
+    "config": {
+      "enc": "angle",
+      "reupload": false,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.8947368421052632,
+      0.9005847953216374,
+      0.8654970760233918
+    ],
+    "mean": 0.8869395711500975,
+    "std": 0.015348943224194571,
+    "seconds": 140.4
+  },
+  "parity-readout": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "parity",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.9239766081871345,
+      0.9181286549707602,
+      0.9298245614035088
+    ],
+    "mean": 0.9239766081871345,
+    "std": 0.004774833806594889,
+    "seconds": 406.5
+  },
+  "cobyla": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "cobyla",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.9005847953216374,
+      0.9064327485380117,
+      0.9005847953216374
+    ],
+    "mean": 0.9025341130604287,
+    "std": 0.0027567515835733108,
+    "seconds": 57.1
+  },
+  "sampled-training": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "q0",
+      "training": "sampled",
+      "opt": "cobyla",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.9005847953216374,
+      0.8830409356725146,
+      0.9122807017543859
+    ],
+    "mean": 0.8986354775828461,
+    "std": 0.012016401565241645,
+    "seconds": 213.1
+  },
+  "original": {
+    "config": {
+      "enc": "zz",
+      "reupload": false,
+      "readout": "parity",
+      "training": "sampled",
+      "opt": "cobyla",
+      "n": 4
+    },
+    "accuracy_per_seed": [
+      0.6666666666666666,
+      0.6432748538011696,
+      0.7602339181286549
+    ],
+    "mean": 0.6900584795321637,
+    "std": 0.05053209121565583,
+    "seconds": 224.5
+  },
+  "2-qubits": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 2
+    },
+    "accuracy_per_seed": [
+      0.8888888888888888,
+      0.9239766081871345,
+      0.935672514619883
+    ],
+    "mean": 0.9161793372319688,
+    "std": 0.01987921837658006,
+    "seconds": 76.1
+  },
+  "6-qubits": {
+    "config": {
+      "enc": "angle",
+      "reupload": true,
+      "readout": "q0",
+      "training": "exact",
+      "opt": "lbfgs",
+      "n": 6
+    },
+    "accuracy_per_seed": [
+      0.8830409356725146,
+      0.8947368421052632,
+      0.9181286549707602
+    ],
+    "mean": 0.8986354775828459,
+    "std": 0.014587358233036809,
+    "seconds": 920.5
+  }
+}
