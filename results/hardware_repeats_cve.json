@@ -1,0 +1,466 @@
+{
+  "dataset": "cve",
+  "backend": "ibm_marrakesh",
+  "samples": 40,
+  "shots": 1024,
+  "repeats": 3,
+  "ideal_accuracy": 0.725,
+  "hardware_accuracy_per_run": [
+    0.725,
+    0.675,
+    0.7
+  ],
+  "flips_per_run": [
+    2,
+    2,
+    1
+  ],
+  "expected_flips_per_run_from_shot_noise": 1.1474226667559229,
+  "samples_flipped_in_every_run": 0,
+  "samples_flipped_at_least_once": 3,
+  "mean_shift_toward_class_1": -0.0059569829011803755,
+  "mean_abs_shift": 0.015328256977651883,
+  "mean_shift_toward_0.5": 0.007933539812266676,
+  "per_sample": [
+    {
+      "label": 0,
+      "p_ideal": 0.6363,
+      "p_hardware": [
+        0.6396,
+        0.627,
+        0.6172
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.8152,
+      "p_hardware": [
+        0.8057,
+        0.7793,
+        0.8184
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.8552,
+      "p_hardware": [
+        0.8428,
+        0.8301,
+        0.8477
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.1095,
+      "p_hardware": [
+        0.1162,
+        0.1094,
+        0.1152
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.7649,
+      "p_hardware": [
+        0.7471,
+        0.7549,
+        0.748
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.0881,
+      "p_hardware": [
+        0.083,
+        0.0781,
+        0.0947
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.7895,
+      "p_hardware": [
+        0.7832,
+        0.7637,
+        0.7637
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.4421,
+      "p_hardware": [
+        0.458,
+        0.4688,
+        0.4619
+      ],
+      "expected_flip_prob": 0.0001,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.8479,
+      "p_hardware": [
+        0.8242,
+        0.8398,
+        0.8389
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.2388,
+      "p_hardware": [
+        0.2617,
+        0.2666,
+        0.25
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.5105,
+      "p_hardware": [
+        0.5039,
+        0.5029,
+        0.5508
+      ],
+      "expected_flip_prob": 0.2502,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.4799,
+      "p_hardware": [
+        0.4912,
+        0.4922,
+        0.4795
+      ],
+      "expected_flip_prob": 0.0995,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.101,
+      "p_hardware": [
+        0.0986,
+        0.1074,
+        0.1055
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.4799,
+      "p_hardware": [
+        0.5088,
+        0.501,
+        0.4746
+      ],
+      "expected_flip_prob": 0.0995,
+      "flip_rate": 0.6666666666666666
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.8307,
+      "p_hardware": [
+        0.8066,
+        0.8037,
+        0.8018
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.5305,
+      "p_hardware": [
+        0.5586,
+        0.5127,
+        0.5518
+      ],
+      "expected_flip_prob": 0.0252,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.1914,
+      "p_hardware": [
+        0.1973,
+        0.1836,
+        0.1758
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.7089,
+      "p_hardware": [
+        0.6787,
+        0.6787,
+        0.7012
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.6576,
+      "p_hardware": [
+        0.665,
+        0.6895,
+        0.665
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.1241,
+      "p_hardware": [
+        0.1182,
+        0.1377,
+        0.1338
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.0838,
+      "p_hardware": [
+        0.1006,
+        0.0938,
+        0.0918
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.7708,
+      "p_hardware": [
+        0.7275,
+        0.7305,
+        0.751
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.805,
+      "p_hardware": [
+        0.8057,
+        0.8096,
+        0.7705
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.2644,
+      "p_hardware": [
+        0.252,
+        0.2549,
+        0.2803
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.504,
+      "p_hardware": [
+        0.5029,
+        0.498,
+        0.4766
+      ],
+      "expected_flip_prob": 0.3987,
+      "flip_rate": 0.6666666666666666
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.2608,
+      "p_hardware": [
+        0.2451,
+        0.252,
+        0.2354
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.8754,
+      "p_hardware": [
+        0.8682,
+        0.8486,
+        0.8213
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.6188,
+      "p_hardware": [
+        0.6172,
+        0.6201,
+        0.6016
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.6933,
+      "p_hardware": [
+        0.6826,
+        0.6816,
+        0.707
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.4863,
+      "p_hardware": [
+        0.4893,
+        0.4863,
+        0.4814
+      ],
+      "expected_flip_prob": 0.1898,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.6041,
+      "p_hardware": [
+        0.5918,
+        0.5928,
+        0.5576
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.1185,
+      "p_hardware": [
+        0.1436,
+        0.0996,
+        0.1172
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.4785,
+      "p_hardware": [
+        0.5137,
+        0.4971,
+        0.4766
+      ],
+      "expected_flip_prob": 0.0844,
+      "flip_rate": 0.3333333333333333
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.8484,
+      "p_hardware": [
+        0.8252,
+        0.8301,
+        0.8398
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.7526,
+      "p_hardware": [
+        0.7412,
+        0.7363,
+        0.75
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 0,
+      "p_ideal": 0.1802,
+      "p_hardware": [
+        0.1816,
+        0.1602,
+        0.1826
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.8685,
+      "p_hardware": [
+        0.8496,
+        0.8389,
+        0.8418
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.9516,
+      "p_hardware": [
+        0.9443,
+        0.9141,
+        0.9248
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.3913,
+      "p_hardware": [
+        0.3779,
+        0.374,
+        0.3682
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    },
+    {
+      "label": 1,
+      "p_ideal": 0.7751,
+      "p_hardware": [
+        0.7812,
+        0.7666,
+        0.7734
+      ],
+      "expected_flip_prob": 0.0,
+      "flip_rate": 0.0
+    }
+  ]
+}
