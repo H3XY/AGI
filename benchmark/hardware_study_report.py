@@ -7,6 +7,11 @@ Per task and backend:
     Poisson-binomial tail P(flips >= observed) pooled over runs
   - mean signed shift of P(class 1) (backend minus ideal) per run, and pooled
     with a 95% bootstrap CI over inputs
+  - per run: bias with a 95% bootstrap CI over inputs, and an exact McNemar test of
+    device vs noise-free correctness on the same inputs (paired accuracy comparison)
+  - per run: the exact Poisson-binomial flip test for that run alone
+  - pooled bias with a two-level bootstrap (runs, then inputs), which adds run-to-run
+    variation to the input-level interval
   - run-to-run agreement of predictions (real device only)
   - calibration snapshot summary of the physical qubits used
 
@@ -19,7 +24,7 @@ import os
 from collections import defaultdict
 
 import numpy as np
-from scipy.stats import binom
+from scipy.stats import binom, binomtest
 
 from benchmark.uncertainty import wilson
 
@@ -50,6 +55,31 @@ def main():
         rng = np.random.default_rng(0)
         bs = shift_in[rng.integers(0, len(p), (2000, len(p)))].mean(axis=1)
         accs = [float(np.mean((row > 0.5).astype(int) == y)) for row in P]
+        ideal_correct = (ideal_pred == y)
+        per_run = []
+        for k, row in enumerate(P):
+            dev_correct = ((row > 0.5).astype(int) == y)
+            n_dev = int(np.sum(dev_correct & ~ideal_correct))
+            n_ide = int(np.sum(~dev_correct & ideal_correct))
+            mc_p = float(binomtest(n_dev, n_dev + n_ide, 0.5).pvalue) if n_dev + n_ide else 1.0
+            sh = row - p
+            bsr = sh[rng.integers(0, len(p), (2000, len(p)))].mean(axis=1)
+            d1 = np.array([1.0])
+            for qi in q:
+                d1 = np.convolve(d1, [1 - qi, qi])
+            per_run.append({"accuracy": float(np.mean(dev_correct)),
+                            "device_only_correct": n_dev, "ideal_only_correct": n_ide, "mcnemar_p": mc_p,
+                            "bias": float(sh.mean()), "bias_ci": [float(np.percentile(bsr, 2.5)), float(np.percentile(bsr, 97.5))],
+                            "flips": flips[k], "p_value_flips": float(d1[flips[k]:].sum())})
+        if len(P) > 1:
+            two = np.empty(4000)
+            for b in range(4000):
+                rr = rng.integers(0, len(P), len(P))
+                ii = rng.integers(0, len(p), len(p))
+                two[b] = (P[rr][:, ii] - p[ii]).mean()
+            two_ci = [float(np.percentile(two, 2.5)), float(np.percentile(two, 97.5))]
+        else:
+            two_ci = None
         preds = (P > 0.5).astype(int)
         agree = float(np.mean([np.mean(preds[i] == preds[j]) for i in range(len(P)) for j in range(i + 1, len(P))])) if len(P) > 1 else None
         r = {"inputs": int(len(y)), "shots": shots, "runs": len(P), "sessions": sorted({d["label"] for d in ds}),
@@ -60,6 +90,8 @@ def main():
              "shift_per_run": [float(np.mean(row - p)) for row in P],
              "shift_pooled": float(shift_in.mean()),
              "shift_pooled_ci": [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))],
+             "shift_pooled_two_level_ci": two_ci,
+             "per_run": per_run,
              "run_to_run_prediction_agreement": agree,
              "job_ids": [rr.get("job_id") for _, rr in runs if rr.get("job_id")],
              "finished_utc": [rr.get("finished_utc") for _, rr in runs]}
@@ -78,6 +110,12 @@ def main():
               f"P(total >= {sum(flips)}) = {r['p_value_flips']:.3g}",
               f"- Mean signed shift of P(class 1): per run {np.round(r['shift_per_run'], 4).tolist()}; pooled {r['shift_pooled']:+.4f} "
               f"(95% CI [{r['shift_pooled_ci'][0]:+.4f}, {r['shift_pooled_ci'][1]:+.4f}])"]
+        for k, pr in enumerate(per_run):
+            L.append(f"  - run {k + 1}: accuracy {pr['accuracy']:.3f}; McNemar vs noise-free: device-only correct {pr['device_only_correct']}, "
+                     f"noise-free-only correct {pr['ideal_only_correct']}, p = {pr['mcnemar_p']:.3g}; flips {pr['flips']} (p = {pr['p_value_flips']:.3g}); "
+                     f"bias {pr['bias']:+.4f} [{pr['bias_ci'][0]:+.4f}, {pr['bias_ci'][1]:+.4f}]")
+        if two_ci:
+            L.append(f"- Pooled bias, two-level bootstrap over runs and inputs: [{two_ci[0]:+.4f}, {two_ci[1]:+.4f}]")
         if agree is not None:
             L.append(f"- Run-to-run prediction agreement: {agree:.3f}")
         if "calibration" in r and r["calibration"]["readout_error_range"]:

@@ -29,6 +29,22 @@
       -0.029908646250000004,
       -0.020905919999999998
     ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.695,
+        "device_only_correct": 7,
+        "ideal_only_correct": 5,
+        "mcnemar_p": 0.7744140625,
+        "bias": -0.025317700000000002,
+        "bias_ci": [
+          -0.029743015000000005,
+          -0.020593645000000008
+        ],
+        "flips": 12,
+        "p_value_flips": 0.0002949643724590885
+      }
+    ],
     "run_to_run_prediction_agreement": null,
     "job_ids": [],
     "finished_utc": [
@@ -91,6 +107,22 @@
     "shift_pooled_ci": [
       -0.006574583749999999,
       -0.0018932925000000077
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.68,
+        "device_only_correct": 1,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 1.0,
+        "bias": -0.004258299999999998,
+        "bias_ci": [
+          -0.00664957125,
+          -0.0018595912499999982
+        ],
+        "flips": 3,
+        "p_value_flips": 0.8568782295725107
+      }
     ],
     "run_to_run_prediction_agreement": null,
     "job_ids": [],
@@ -171,6 +203,51 @@
       -0.006744977916666667,
       -0.002562009166666671
     ],
+    "shift_pooled_two_level_ci": [
+      -0.007644151249999998,
+      -0.0016167000000000017
+    ],
+    "per_run": [
+      {
+        "accuracy": 0.685,
+        "device_only_correct": 2,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 1.0,
+        "bias": -0.006333299999999999,
+        "bias_ci": [
+          -0.009002528749999995,
+          -0.0037333600000000033
+        ],
+        "flips": 4,
+        "p_value_flips": 0.6798724719516519
+      },
+      {
+        "accuracy": 0.655,
+        "device_only_correct": 1,
+        "ideal_only_correct": 7,
+        "mcnemar_p": 0.0703125,
+        "bias": -0.005317700000000003,
+        "bias_ci": [
+          -0.008063215000000006,
+          -0.0025398087500000037
+        ],
+        "flips": 8,
+        "p_value_flips": 0.05358429619663644
+      },
+      {
+        "accuracy": 0.7,
+        "device_only_correct": 5,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 0.453125,
+        "bias": -0.002207350000000002,
+        "bias_ci": [
+          -0.004588260000000002,
+          0.000178028749999993
+        ],
+        "flips": 7,
+        "p_value_flips": 0.13057507556287645
+      }
+    ],
     "run_to_run_prediction_agreement": 0.96,
     "job_ids": [
       "dbov06tt7fqc7388gab0",
@@ -240,6 +317,22 @@
       -0.0246440325,
       -0.01667910375
     ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.73,
+        "device_only_correct": 3,
+        "ideal_only_correct": 5,
+        "mcnemar_p": 0.7265625,
+        "bias": -0.0208856,
+        "bias_ci": [
+          -0.024649577500000002,
+          -0.01668159875
+        ],
+        "flips": 8,
+        "p_value_flips": 0.003230571755563679
+      }
+    ],
     "run_to_run_prediction_agreement": null,
     "job_ids": [],
     "finished_utc": [
@@ -303,6 +396,22 @@
       -0.004622302499999999,
       -0.0006982637499999951
     ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.745,
+        "device_only_correct": 2,
+        "ideal_only_correct": 1,
+        "mcnemar_p": 1.0,
+        "bias": -0.002702649999999997,
+        "bias_ci": [
+          -0.0047181837499999935,
+          -0.0007629225000000024
+        ],
+        "flips": 3,
+        "p_value_flips": 0.6285848086588133
+      }
+    ],
     "run_to_run_prediction_agreement": null,
     "job_ids": [],
     "finished_utc": [
@@ -365,6 +474,22 @@
     "shift_pooled_ci": [
       -0.005898262500000002,
       -0.0012517087500000079
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.73,
+        "device_only_correct": 1,
+        "ideal_only_correct": 3,
+        "mcnemar_p": 0.625,
+        "bias": -0.0035278499999999986,
+        "bias_ci": [
+          -0.006066073750000003,
+          -0.0009732225000000012
+        ],
+        "flips": 4,
+        "p_value_flips": 0.3652910908287322
+      }
     ],
     "run_to_run_prediction_agreement": null,
     "job_ids": [
