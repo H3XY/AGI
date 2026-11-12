@@ -8,7 +8,8 @@ and compare accuracy on the exploratory test sets and the confirmatory sets.
 Usage:  python -m benchmark.dequantize        (~5 min, CPU only; pre-registered grid)
         python -m benchmark.dequantize --posthoc   (post-hoc sensitivity: wider C grid,
                                                     because CV chose the grid edge C=0.001)
-Writes results/dequantization/{dequantization.json, .md} (or dequantization_posthoc.*)
+        python -m benchmark.dequantize --extend    (10 seeds, see results/confirmatory/EXTENSION_10SEEDS.md)
+Writes results/dequantization/{dequantization.json, .md} (or dequantization_posthoc.*, dequantization_10seeds.*)
 """
 import itertools
 import json
@@ -21,7 +22,7 @@ import numpy as np  # noqa: E402
 from sklearn.linear_model import LogisticRegression  # noqa: E402
 from sklearn.model_selection import GridSearchCV, StratifiedKFold  # noqa: E402
 
-from benchmark.confirmatory import CONFIRM_SPLIT, SEEDS  # noqa: E402
+from benchmark.confirmatory import CONFIRM_SPLIT, SEEDS, load_predictions  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "results", "dequantization")
@@ -81,6 +82,9 @@ GRID = [0.001, 0.01, 0.1, 1, 10, 100]
 POSTHOC_GRID = [1e-5, 3e-5, 1e-4, 3e-4, 0.001, 0.01, 0.1, 1, 10, 100]
 
 
+EXTENDED = False
+
+
 def run_task(task, W):
     from core.features import make_angle_pipeline
     from core.text_tasks import load_embeddings
@@ -89,7 +93,7 @@ def run_task(task, W):
     pipe = make_angle_pipeline(4, seed=0, method="pls").fit(X_full, y_full)
     sets = {"test": load_embeddings(task, "test"), "confirm": load_embeddings(task, CONFIRM_SPLIT[task])}
     A = {s: pipe.transform(X) for s, (X, _) in sets.items()}
-    q = np.load(os.path.join(CONF, f"predictions_{task}.npz"))
+    q, seeds = load_predictions(task, EXTENDED)
     cv = StratifiedKFold(5, shuffle=True, random_state=0)
     grid = {"C": GRID}
     models = ["Fourier surrogate, full spectrum (624 features)"] + [f"Random Fourier subset, k={k}" for k in KS]
@@ -98,7 +102,7 @@ def run_task(task, W):
     cv_score = {m: [] for m in models}
     rng_k = np.random.default_rng(1)
     subsets = {k: rng_k.choice(len(W), k, replace=False) for k in KS}
-    for seed in SEEDS:
+    for seed in seeds:
         X_tr, y_tr = load_embeddings(task, "train", limit=600, seed=seed)
         A_tr = pipe.transform(X_tr)
         for m, Wm in zip(models, [W] + [W[subsets[k]] for k in KS]):
@@ -127,12 +131,14 @@ def run_task(task, W):
 
 
 def main():
-    global GRID
+    global GRID, EXTENDED
     import argparse
     a = argparse.ArgumentParser()
     a.add_argument("--posthoc", action="store_true")
+    a.add_argument("--extend", action="store_true")
     args = a.parse_args()
-    name = "dequantization_posthoc" if args.posthoc else "dequantization"
+    EXTENDED = args.extend
+    name = "dequantization_posthoc" if args.posthoc else ("dequantization_10seeds" if args.extend else "dequantization")
     if args.posthoc:
         GRID = POSTHOC_GRID
     os.makedirs(OUT, exist_ok=True)
@@ -143,7 +149,7 @@ def main():
         out["tasks"][task] = run_task(task, W)
         print(task, "done", flush=True)
     json.dump(out, open(os.path.join(OUT, f"{name}.json"), "w"), indent=2)
-    L = ["# Dequantization check (" + ("POST-HOC sensitivity analysis, wider C grid " + str(GRID) if args.posthoc else "pre-registered: see PROTOCOL.md") + ")", "",
+    L = ["# Dequantization check (" + ("POST-HOC sensitivity analysis, wider C grid " + str(GRID) if args.posthoc else ("10-seed extension, see results/confirmatory/EXTENSION_10SEEDS.md; primary reading is the 3-seed one" if args.extend else "pre-registered: see PROTOCOL.md")) + ")", "",
          f"Frequency basis: integer vectors in {{-2..2}}^4, {len(W)} non-zero up to sign (624 cos/sin features).", "",
          "## Spectrum check (trained seed-0 QNN, 2,000 random inputs)", "",
          "| Task | Max abs residual, {-2..2} basis | RMS residual | Control: max abs residual, {-1..1} basis |", "|---|---|---|---|"]
@@ -152,7 +158,7 @@ def main():
     for t, r in out["tasks"].items():
         for s, label in (("confirm", f"confirmatory set ({CONFIRM_SPLIT[t]})"), ("test", "exploratory test set")):
             x = r[s]
-            L += ["", f"## {t}: {label}, {x['items']} items", "", "| Model | Seeds 0, 1, 2 | Mean | QNN minus model [two-level 95% CI] |", "|---|---|---|---|"]
+            L += ["", f"## {t}: {label}, {x['items']} items", "", f"| Model | {'Seeds 0-9' if args.extend else 'Seeds 0, 1, 2'} | Mean | QNN minus model [two-level 95% CI] |", "|---|---|---|---|"]
             for m, a in x["accuracy"].items():
                 cmp = x["qnn_minus"].get(m)
                 L.append(f"| {m} | {', '.join(f'{v:.3f}' for v in a['per_seed'])} | {a['mean']:.3f} | "
@@ -160,7 +166,7 @@ def main():
             if s == "confirm":
                 ci = x["qnn_minus"]["Fourier surrogate, full spectrum (624 features)"]["two_level_ci"]
                 verdict = "classically matched (CI at or below +0.01)" if ci[1] <= 0.01 else ("surrogate below the QNN (CI above 0)" if ci[0] > 0 else "inconclusive")
-                L += ["", f"**{'Reading (same rule as the pre-registered one, applied post hoc)' if args.posthoc else 'Pre-registered reading'}:** {verdict}"]
+                L += ["", f"**{'Reading (same rule as the pre-registered one, applied post hoc)' if args.posthoc else ('Same reading rule, 10 seeds' if args.extend else 'Pre-registered reading')}:** {verdict}"]
         L += ["", f"C grid: {r['grid']}; features unscaled (cos/sin in [-1, 1]), L2-regularised logistic regression.",
               f"CV-chosen C per seed: {r['chosen_C']}", f"5-fold CV accuracy at the chosen C, per seed: {r['cv_accuracy_at_chosen_C']}"]
     open(os.path.join(OUT, f"{name}.md"), "w").write("\n".join(L) + "\n")

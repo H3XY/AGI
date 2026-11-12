@@ -10,7 +10,10 @@ Statistics: per-seed paired bootstrap CI and exact McNemar test; a two-level boo
 
 Usage:  python -m benchmark.confirmatory          (~45 min, CPU only)
         python -m benchmark.confirmatory --analyse-only   (recompute stats from saved predictions)
+        python -m benchmark.confirmatory --extend         (seed extension, see EXTENSION_10SEEDS.md:
+                                                            trains seeds 3-9, analyses seeds 0-9)
 Writes results/confirmatory/{confirmatory.json, confirmatory.md, predictions_<task>.npz}
+  (--extend: predictions_<task>_seeds3-9.npz, confirmatory_10seeds.{json,md})
 """
 import argparse
 import json
@@ -30,13 +33,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "results", "confirmatory")
 CONFIRM_SPLIT = {"sentiment": "validation", "cve": "holdout"}
 SEEDS = [0, 1, 2]
+EXTRA_SEEDS = [3, 4, 5, 6, 7, 8, 9]
 MODELS = ["Quantum (QNN)", "Logistic regression, CV-tuned", "SVM (RBF), CV-tuned", "Full embedding, logistic regression, CV-tuned"]
 PRIMARY = ("Quantum (QNN)", "Logistic regression, CV-tuned")
 B2 = 10000
 B1 = 2000
 
 
-def train_and_predict(task, maxiter=60):
+def train_and_predict(task, maxiter=60, seeds=None, fname=None):
+    seeds = SEEDS if seeds is None else seeds
     from core.features import make_angle_pipeline
     from core.qnn_core import build_qnn, predict_proba, train_classifier
     from core.text_tasks import load_embeddings
@@ -49,7 +54,7 @@ def train_and_predict(task, maxiter=60):
     full = GridSearchCV(LogisticRegression(max_iter=3000), {"C": [0.01, 0.1, 1, 10, 100]}, cv=cv).fit(X_full, y_full)
 
     preds = {s: {m: [] for m in MODELS} for s in sets}
-    for seed in SEEDS:
+    for seed in seeds:
         t0 = time.time()
         X_tr, y_tr = load_embeddings(task, "train", limit=600, seed=seed)
         A_tr = pipe.transform(X_tr)
@@ -63,7 +68,7 @@ def train_and_predict(task, maxiter=60):
             preds[s]["SVM (RBF), CV-tuned"].append(svm_t.predict(A[s]))
             preds[s]["Full embedding, logistic regression, CV-tuned"].append(full.predict(X))
         print(f"  {task} seed {seed} trained in {time.time() - t0:.0f} s", flush=True)
-    np.savez_compressed(os.path.join(OUT, f"predictions_{task}.npz"),
+    np.savez_compressed(os.path.join(OUT, fname or f"predictions_{task}.npz"),
                         **{f"{s}|{m}": np.array(preds[s][m]) for s in sets for m in MODELS},
                         **{f"{s}|labels": sets[s][1] for s in sets})
 
@@ -76,8 +81,17 @@ def mcnemar(a_correct, b_correct):
     return n01, n10, float(p)
 
 
-def analyse(task):
-    d = np.load(os.path.join(OUT, f"predictions_{task}.npz"))
+def load_predictions(task, extended=False):
+    base = dict(np.load(os.path.join(OUT, f"predictions_{task}.npz")))
+    if not extended:
+        return base, SEEDS
+    ext = np.load(os.path.join(OUT, f"predictions_{task}_seeds3-9.npz"))
+    out = {k: (v if k.endswith("|labels") else np.concatenate([v, ext[k]], axis=0)) for k, v in base.items()}
+    return out, SEEDS + EXTRA_SEEDS
+
+
+def analyse(task, extended=False):
+    d, seeds = load_predictions(task, extended)
     res = {}
     for s in ("test", "confirm"):
         y = d[f"{s}|labels"]
@@ -92,7 +106,7 @@ def analyse(task):
         for other in MODELS[1:]:
             diff = C[PRIMARY[0]] - C[other]                                 # seeds x items
             per_seed = []
-            for k, seed in enumerate(SEEDS):
+            for k, seed in enumerate(seeds):
                 idx = rng.integers(0, n, (B1, n))
                 bs = diff[k][idx].mean(axis=1)
                 n01, n10, p = mcnemar(C[PRIMARY[0]][k], C[other][k])
@@ -101,7 +115,7 @@ def analyse(task):
                                  "qnn_only_correct": n01, "other_only_correct": n10, "mcnemar_p": p})
             two = np.empty(B2)
             for b in range(B2):
-                ss = rng.integers(0, len(SEEDS), len(SEEDS))
+                ss = rng.integers(0, len(seeds), len(seeds))
                 ii = rng.integers(0, n, n)
                 two[b] = diff[ss][:, ii].mean()
             r["contrasts"][other] = {"mean_diff": float(diff.mean()),
@@ -122,14 +136,16 @@ def verdict(task, c):
     return "inconclusive"
 
 
-def write(out):
-    json.dump(out, open(os.path.join(OUT, "confirmatory.json"), "w"), indent=2)
-    L = ["# Confirmatory evaluation (pre-registered: see PROTOCOL.md)", ""]
+def write(out, extended=False):
+    name = "confirmatory_10seeds" if extended else "confirmatory"
+    json.dump(out, open(os.path.join(OUT, f"{name}.json"), "w"), indent=2)
+    L = ["# Confirmatory evaluation " + ("(10-seed extension, specified in EXTENSION_10SEEDS.md before running; the primary verdict remains the 3-seed one in confirmatory.md)" if extended else "(pre-registered: see PROTOCOL.md)"), ""]
+    seed_label = "Seeds 0-9" if extended else "Seeds 0, 1, 2"
     for task, res in out.items():
         for s, label in (("confirm", f"CONFIRMATORY set ({CONFIRM_SPLIT[task]})"), ("test", "exploratory test set (as in the paper)")):
             r = res[s]
             L += [f"## {task}: {label}, {r['items']} items, {r['share_class1']:.1%} class 1 (majority baseline {r['majority_baseline']:.3f})", "",
-                  "| Model | Seeds 0, 1, 2 | Mean ± std |", "|---|---|---|"]
+                  f"| Model | {seed_label} | Mean ± std |", "|---|---|---|"]
             for m in MODELS:
                 a = r["accuracy"][m]
                 L.append(f"| {m} | {', '.join(f'{v:.3f}' for v in a['per_seed'])} | {a['mean']:.3f} ± {a['std']:.3f} |")
@@ -138,9 +154,9 @@ def write(out):
                 ps = "; ".join(f"{p['diff']:+.3f} [{p['ci'][0]:+.3f}, {p['ci'][1]:+.3f}], p={p['mcnemar_p']:.3g}" for p in c["per_seed"])
                 L.append(f"| {other} | {c['mean_diff']:+.3f} | [{c['two_level_ci'][0]:+.3f}, {c['two_level_ci'][1]:+.3f}] | {ps} |")
             if s == "confirm":
-                L += ["", f"**Pre-registered verdict:** {verdict(task, r['contrasts'][PRIMARY[1]])}"]
+                L += ["", f"**{'Same decision rule applied to 10 seeds' if extended else 'Pre-registered verdict'}:** {verdict(task, r['contrasts'][PRIMARY[1]])}"]
             L.append("")
-    open(os.path.join(OUT, "confirmatory.md"), "w").write("\n".join(L) + "\n")
+    open(os.path.join(OUT, f"{name}.md"), "w").write("\n".join(L) + "\n")
     print("\n".join(L))
 
 
@@ -148,12 +164,16 @@ def main():
     a = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     a.add_argument("--tasks", nargs="+", default=["sentiment", "cve"])
     a.add_argument("--analyse-only", action="store_true")
+    a.add_argument("--extend", action="store_true", help="10-seed extension (EXTENSION_10SEEDS.md)")
     args = a.parse_args()
     os.makedirs(OUT, exist_ok=True)
     if not args.analyse_only:
         for t in args.tasks:
-            train_and_predict(t)
-    write({t: analyse(t) for t in args.tasks})
+            if args.extend:
+                train_and_predict(t, seeds=EXTRA_SEEDS, fname=f"predictions_{t}_seeds3-9.npz")
+            else:
+                train_and_predict(t)
+    write({t: analyse(t, args.extend) for t in args.tasks}, args.extend)
 
 
 if __name__ == "__main__":
