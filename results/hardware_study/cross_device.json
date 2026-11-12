@@ -1,0 +1,235 @@
+{
+  "inputs": 100,
+  "ideal_accuracy": 0.65,
+  "expected_flips": 3.089930325883311,
+  "devices": {
+    "ibm_marrakesh": {
+      "runs": [
+        {
+          "accuracy": 0.65,
+          "device_only_correct": 2,
+          "ideal_only_correct": 2,
+          "mcnemar_p": 1.0,
+          "flips": 4,
+          "flips_p": 0.3728219754353303,
+          "shift": -0.0066003000000000025,
+          "shift_ci": [
+            -0.010491915000000001,
+            -0.0024722850000000003
+          ]
+        },
+        {
+          "accuracy": 0.6,
+          "device_only_correct": 1,
+          "ideal_only_correct": 6,
+          "mcnemar_p": 0.125,
+          "flips": 7,
+          "flips_p": 0.018463304711393982,
+          "shift": -0.006620200000000001,
+          "shift_ci": [
+            -0.010722987500000005,
+            -0.0026300425000000053
+          ]
+        },
+        {
+          "accuracy": 0.66,
+          "device_only_correct": 3,
+          "ideal_only_correct": 2,
+          "mcnemar_p": 1.0,
+          "flips": 5,
+          "flips_p": 0.1740987929902421,
+          "shift": -0.0019030000000000008,
+          "shift_ci": [
+            -0.005414885000000002,
+            0.0015732299999999962
+          ]
+        }
+      ],
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": 37,
+      "two_qubit_gates": 6,
+      "readout_error_range": [
+        0.005859375,
+        0.02392578125
+      ],
+      "two_qubit_error_range": [
+        0.002189399317881896,
+        0.0026936117834812645
+      ]
+    },
+    "ibm_kingston": {
+      "runs": [
+        {
+          "accuracy": 0.63,
+          "device_only_correct": 0,
+          "ideal_only_correct": 2,
+          "mcnemar_p": 0.5,
+          "flips": 2,
+          "flips_p": 0.8539533522882485,
+          "shift": -0.008709999999999999,
+          "shift_ci": [
+            -0.012125857499999991,
+            -0.005486387499999998
+          ]
+        }
+      ],
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": 37,
+      "two_qubit_gates": 6,
+      "readout_error_range": [
+        0.0048828125,
+        0.02294921875
+      ],
+      "two_qubit_error_range": [
+        0.0010305941208901548,
+        0.00600647797336798
+      ]
+    },
+    "ibm_fez": {
+      "runs": [
+        {
+          "accuracy": 0.64,
+          "device_only_correct": 2,
+          "ideal_only_correct": 3,
+          "mcnemar_p": 1.0,
+          "flips": 5,
+          "flips_p": 0.1740987929902421,
+          "shift": -0.0151742,
+          "shift_ci": [
+            -0.020817925,
+            -0.009501517499999999
+          ]
+        }
+      ],
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": 37,
+      "two_qubit_gates": 6,
+      "readout_error_range": [
+        0.00390625,
+        0.029296875
+      ],
+      "two_qubit_error_range": [
+        0.0015835330194476083,
+        0.007221406172541245
+      ]
+    },
+    "fake_marrakesh": {
+      "runs": [
+        {
+          "accuracy": 0.66,
+          "device_only_correct": 1,
+          "ideal_only_correct": 0,
+          "mcnemar_p": 1.0,
+          "flips": 1,
+          "flips_p": 0.9718649840503897,
+          "shift": -0.004510399999999999,
+          "shift_ci": [
+            -0.007815702499999994,
+            -0.0011547950000000001
+          ]
+        }
+      ],
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": 37,
+      "two_qubit_gates": 6,
+      "readout_error_range": [
+        0.004150390625,
+        0.01123046875
+      ],
+      "two_qubit_error_range": [
+        0.001548074406909461,
+        0.003201528503065487
+      ]
+    },
+    "fake_fez": {
+      "runs": [
+        {
+          "accuracy": 0.64,
+          "device_only_correct": 1,
+          "ideal_only_correct": 2,
+          "mcnemar_p": 1.0,
+          "flips": 3,
+          "flips_p": 0.6297346997161302,
+          "shift": -0.009198400000000002,
+          "shift_ci": [
+            -0.013486065,
+            -0.004936162500000006
+          ]
+        }
+      ],
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": 37,
+      "two_qubit_gates": 6,
+      "readout_error_range": [
+        0.0048828125,
+        0.015869140625
+      ],
+      "two_qubit_error_range": [
+        0.0029846582394649213,
+        0.0101566715843735
+      ]
+    }
+  },
+  "shift_differences": {
+    "ibm_kingston - ibm_marrakesh": {
+      "diff": -0.0036688333333333317,
+      "ci": [
+        -0.007064079999999994,
+        -0.0001984016666666576
+      ]
+    },
+    "ibm_fez - ibm_marrakesh": {
+      "diff": -0.010133033333333333,
+      "ci": [
+        -0.01450182,
+        -0.005795729999999995
+      ]
+    },
+    "ibm_fez - ibm_kingston": {
+      "diff": -0.006464200000000002,
+      "ci": [
+        -0.011307745000000001,
+        -0.001541777500000002
+      ]
+    },
+    "fake_fez - ibm_fez": {
+      "diff": 0.0059758,
+      "ci": [
+        0.0014640049999999983,
+        0.010429007499999992
+      ]
+    },
+    "fake_marrakesh - ibm_marrakesh": {
+      "diff": 0.0005307666666666699,
+      "ci": [
+        -0.0029361091666666637,
+        0.004024022500000004
+      ]
+    }
+  }
+}
