@@ -30,47 +30,38 @@ probabilities with L-BFGS-B on cross-entropy loss.
 
 ## Results
 
-**Trained text classifiers** (`python train.py`, full test sets):
+All numbers below are in `results/`. The paper ([H3XY/HonestQML-paper](https://github.com/H3XY/HonestQML-paper)) has the full methods.
 
-| Task | Test texts | Majority class | Quantum (4 qubits) | Logistic reg. (same 4 features) | Logistic reg. (full embedding, all data) |
-|---|---|---|---|---|---|
-| Sentiment | 1,066 | 0.500 | 0.758 | 0.769 | 0.774 |
-| CVE severity | 2,424 | 0.578 | 0.699 | 0.692 | 0.715 |
+**Text classifiers** (`python -m benchmark.uncertainty`): test accuracy, mean ± std over 3 seeds (the seed sets the 600-text training subset and the initial weights). Same-feature baselines are tuned by 5-fold cross-validation on the training subset.
 
-The QNN trains on 600 texts. The PLS reducer and the full-embedding baseline use the whole
-training split (8,530 sentences / 9,692 CVEs). CVEs are split by publication date,
-so the model is tested on CVEs published after the ones it learned from.
+| Model | Sentiment (1,066 test) | CVE severity (2,424 test) |
+|---|---|---|
+| Majority class | 0.500 | 0.578 |
+| Quantum, 4 qubits | 0.757 ± 0.007 | 0.699 ± 0.015 |
+| Logistic regression, same 4 features, CV-tuned | 0.772 ± 0.002 | 0.689 ± 0.004 |
+| RBF SVM, same 4 features, CV-tuned | 0.770 ± 0.004 | 0.691 ± 0.008 |
+| Logistic regression, full embedding, all data | 0.774 | 0.715 |
+| Paired 95% CI, quantum minus tuned logistic regression | −0.030 to −0.002 | −0.009 to +0.023 |
 
-**Benchmark** (`python -m benchmark.run_benchmark`): the same trained weights on an
-ideal simulator and on a simulated noisy 5-qubit IBM device (`FakeManilaV2`),
-against classical models on the same reduced features:
+These test sets were used while designing the circuit, so the numbers above are exploratory (on them, sentiment looked 1.5 points worse and CVE a tie). CVEs are split by publication date (training up to 9 April 2024, 50% high/critical; test after, 42%), so the model is tested on later CVEs.
+
+**Pre-registered confirmatory test** (`python -m benchmark.confirmatory`; protocol [results/confirmatory/PROTOCOL.md](results/confirmatory/PROTOCOL.md), committed before the data was downloaded): frozen system, scored once on untouched data (Rotten Tomatoes validation split; 13,432 NVD CVEs published May-Aug 2024). Sentiment: QNN 0.766 vs tuned logistic regression 0.769, difference -0.003 [-0.017, +0.011], so the expected gap was **not** confirmed. CVE: 0.708 vs 0.720, difference -0.011 [-0.024, +0.003], a tie within the pre-set +/-3-point margin; the tuned SVM (0.726) is 1.8 points ahead of the QNN. The QNN is not ahead of any baseline. [results/confirmatory/confirmatory.md](results/confirmatory/confirmatory.md)
+
+**Which design choice mattered** (`python -m benchmark.ablation`, breast cancer, 3 seeds): in a 2x2 of encoding and re-uploading, `ZZFeatureMap` costs 24 points with re-uploading (0.910 to 0.667) and 19 without (0.887 to 0.700); re-uploading adds 2.3 points to angle encoding. Every other single choice (readout, optimizer, exact vs sampled training, 2 or 6 qubits) moves accuracy by at most 1.4 points. [results/ablation.md](results/ablation.md)
+
+**Benchmark on smaller splits** (`python -m benchmark.run_benchmark`): one seed, 300 training and up to 200 test items, PCA for tabular data. The text-task numbers above supersede the text bars here.
 
 ![Quantum vs classical benchmark](results/benchmark.png)
 
-**Real quantum hardware** (`--hardware`, IBM `ibm_marrakesh`, 156-qubit Heron
-processor, 1,024 shots). The same trained weights on the same 40 test samples
-(30 for iris), compared with the ideal simulator:
+**Real quantum hardware** (`python -m benchmark.hardware_study`, IBM `ibm_marrakesh`, 156-qubit Heron, 1,024 shots, no error mitigation). 200 test inputs per task, compiled once with a fixed transpiler seed so every run uses the same physical qubits, compared with noise-free simulation on the same inputs and with two local noise models:
 
-![Real hardware vs ideal simulator](results/benchmark_hardware.png)
+![Hardware study](results/hardware_study/figure.png)
 
-| Dataset | Ideal sim | ibm_marrakesh |
-|---|---|---|
-| breast_cancer | 0.875 | 0.875 |
-| iris | 0.900 | 0.900 |
-| moons | 0.900 | 0.900 |
-| sentiment | 0.675 | 0.675 |
-| cve | 0.725 | 0.650 |
+- **Accuracy:** no run differs significantly from noise-free simulation on the same inputs (exact McNemar p = 1, 0.07, 0.45 for CVE; 0.63 for sentiment) (CVE 0.685, 0.655 and 0.700 over three runs vs 0.685 noise-free; sentiment 0.730 vs 0.740). Prediction changes are at the edge of the exact shot-noise expectation (19 vs 13.3 expected for CVE over three runs, p = 0.055; p = 0.37 for sentiment), and repeated runs agree on 96% of predictions.
+- **Bias:** consistent in sign, varying in size. The device lowers mean P(class 1) in every run: per CVE run 0.0063 [0.0037, 0.0090] and 0.0053 [0.0025, 0.0081], then 0.0022 [-0.0002, 0.0046] three hours later under the same reported calibration (interval includes zero); pooled 0.0046 (two-level CI over runs and inputs [0.0016, 0.0076]). Sentiment: 0.0035 [0.0010, 0.0061].
+- **Noise models:** `FakeMarrakesh` (a snapshot of the same device) reproduces that bias; `FakeManilaV2` (an older 5-qubit device) overstates it about fivefold and changes significantly more predictions than shot noise allows.
 
-The whole run used about a minute of quantum time over 5 jobs.
-
-Takeaways:
-- The QNN comes within about 0–10 points of classical models, and never clearly beats them.
-- On real hardware, 4 of 5 datasets gave exactly the same answers as the noise-free simulator. The transpiled circuit is shallow: depth 37, 6 two-qubit gates.
-- CVE flipped 3 of 40 answers in that run. A follow-up study reran the same 40 samples 3 more times on `ibm_marrakesh` ([results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), `python -m benchmark.hardware_repeats`). It found 5 flips in total against 3.45 expected from 1,024-shot sampling alone (p ≈ 0.27). No sample flipped in every run, and every flipped sample had an ideal probability within 0.025 of 0.5. **The drop is shot noise, not a hardware bias.** The device's mean shift in P(class 1) was −0.006.
-- The local noise model (`FakeManilaV2`, an older 5-qubit device) is more pessimistic than today's hardware. Its mean shift was −0.030, five times larger, and it flipped 2 samples in every run ([results/hardware_repeats_cve_fake.md](results/hardware_repeats_cve_fake.md)).
-- An earlier design (`ZZFeatureMap`, parity readout, training on sampled shots) barely beat a coin flip. Circuit design matters more than qubit count here.
-
-Full tables: [results/benchmark.md](results/benchmark.md), [results/sentiment.json](results/sentiment.json), [results/cve.json](results/cve.json).
+Details, job IDs and the calibration snapshot: [results/hardware_study/report.md](results/hardware_study/report.md), [results/ibm_jobs.json](results/ibm_jobs.json). An earlier 40-input run per dataset ([results/benchmark.md](results/benchmark.md), [results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), exact statistics in [results/uncertainty.md](results/uncertainty.md)) is superseded by this study.
 
 ## Setup
 
@@ -111,7 +102,12 @@ python -m benchmark.run_benchmark --datasets iris moons
 python -m ibmq.run_on_ibmq --fake                    # simulated IBM noise, no account needed
 python -m ibmq.run_on_ibmq --task cve "Heap overflow in the TLS parser allows remote code execution"
 python -m benchmark.run_benchmark --hardware          # adds a real-hardware comparison
-python -m benchmark.hardware_repeats --dataset cve --repeats 3   # shot noise vs device bias
+python -m benchmark.hardware_study --fake-only        # hardware study on local noise models (free)
+python -m benchmark.hardware_study --runs 3            # real device; checks the remaining IBM allowance first
+python -m benchmark.hardware_study_report && python -m benchmark.hardware_study_figure
+python -m benchmark.uncertainty                        # seeds, tuned baselines, CIs (~40 min, CPU)
+python -m benchmark.ablation                           # circuit-design ablation (~20 min, CPU)
+python -m benchmark.confirmatory                       # pre-registered test on untouched data (~45 min, CPU)
 
 # Scan dependencies for known CVEs (pip-audit)
 ./security/audit_deps.sh

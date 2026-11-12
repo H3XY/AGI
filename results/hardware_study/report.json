@@ -1,0 +1,529 @@
+{
+  "cve/fake_manila": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 1,
+    "sessions": [
+      "session1"
+    ],
+    "ideal_accuracy": 0.685,
+    "accuracy_per_run": [
+      0.695
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.6280132012185453,
+        0.7546368564733095
+      ]
+    ],
+    "flips_per_run": [
+      12
+    ],
+    "expected_flips_per_run": 4.431096268840678,
+    "p_value_flips": 0.0002949643724590885,
+    "shift_per_run": [
+      -0.025317700000000002
+    ],
+    "shift_pooled": -0.025317700000000002,
+    "shift_pooled_ci": [
+      -0.029908646250000004,
+      -0.020905919999999998
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.695,
+        "device_only_correct": 7,
+        "ideal_only_correct": 5,
+        "mcnemar_p": 0.7744140625,
+        "bias": -0.025317700000000002,
+        "bias_ci": [
+          -0.029743015000000005,
+          -0.020593645000000008
+        ],
+        "flips": 12,
+        "p_value_flips": 0.0002949643724590885
+      }
+    ],
+    "run_to_run_prediction_agreement": null,
+    "job_ids": [],
+    "finished_utc": [
+      "2026-11-09T16:16:53+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 24,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 48,
+          "sx": 24,
+          "cx": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.014399999999999968,
+        0.09640000000000004
+      ],
+      "two_qubit_error_range": [
+        0.008827712070629129,
+        0.01394038580879381
+      ]
+    }
+  },
+  "cve/fake_marrakesh": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 1,
+    "sessions": [
+      "session1"
+    ],
+    "ideal_accuracy": 0.685,
+    "accuracy_per_run": [
+      0.68
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.612479733946457,
+        0.7407357039229475
+      ]
+    ],
+    "flips_per_run": [
+      3
+    ],
+    "expected_flips_per_run": 4.431096268840678,
+    "p_value_flips": 0.8568782295725107,
+    "shift_per_run": [
+      -0.004258299999999998
+    ],
+    "shift_pooled": -0.004258299999999998,
+    "shift_pooled_ci": [
+      -0.006574583749999999,
+      -0.0018932925000000077
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.68,
+        "device_only_correct": 1,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 1.0,
+        "bias": -0.004258299999999998,
+        "bias_ci": [
+          -0.00664957125,
+          -0.0018595912499999982
+        ],
+        "flips": 3,
+        "p_value_flips": 0.8568782295725107
+      }
+    ],
+    "run_to_run_prediction_agreement": null,
+    "job_ids": [],
+    "finished_utc": [
+      "2026-11-09T16:16:53+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 37,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 68,
+          "sx": 28,
+          "cz": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.004150390625,
+        0.01123046875
+      ],
+      "two_qubit_error_range": [
+        0.001548074406909461,
+        0.003201528503065487
+      ]
+    }
+  },
+  "cve/ibm_marrakesh": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 3,
+    "sessions": [
+      "pilot",
+      "session1",
+      "session2"
+    ],
+    "ideal_accuracy": 0.685,
+    "accuracy_per_run": [
+      0.685,
+      0.655,
+      0.7
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.617649158589664,
+        0.7453778192205573
+      ],
+      [
+        0.5867546071792236,
+        0.7174031309860971
+      ],
+      [
+        0.6332080400667355,
+        0.759253557565936
+      ]
+    ],
+    "flips_per_run": [
+      4,
+      8,
+      7
+    ],
+    "expected_flips_per_run": 4.431096268840678,
+    "p_value_flips": 0.0548336979133444,
+    "shift_per_run": [
+      -0.006333299999999999,
+      -0.005317700000000003,
+      -0.002207350000000002
+    ],
+    "shift_pooled": -0.0046194500000000015,
+    "shift_pooled_ci": [
+      -0.006744977916666667,
+      -0.002562009166666671
+    ],
+    "shift_pooled_two_level_ci": [
+      -0.007644151249999998,
+      -0.0016167000000000017
+    ],
+    "per_run": [
+      {
+        "accuracy": 0.685,
+        "device_only_correct": 2,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 1.0,
+        "bias": -0.006333299999999999,
+        "bias_ci": [
+          -0.009002528749999995,
+          -0.0037333600000000033
+        ],
+        "flips": 4,
+        "p_value_flips": 0.6798724719516519
+      },
+      {
+        "accuracy": 0.655,
+        "device_only_correct": 1,
+        "ideal_only_correct": 7,
+        "mcnemar_p": 0.0703125,
+        "bias": -0.005317700000000003,
+        "bias_ci": [
+          -0.008063215000000006,
+          -0.0025398087500000037
+        ],
+        "flips": 8,
+        "p_value_flips": 0.05358429619663644
+      },
+      {
+        "accuracy": 0.7,
+        "device_only_correct": 5,
+        "ideal_only_correct": 2,
+        "mcnemar_p": 0.453125,
+        "bias": -0.002207350000000002,
+        "bias_ci": [
+          -0.004588260000000002,
+          0.000178028749999993
+        ],
+        "flips": 7,
+        "p_value_flips": 0.13057507556287645
+      }
+    ],
+    "run_to_run_prediction_agreement": 0.96,
+    "job_ids": [
+      "dbov06tt7fqc7388gab0",
+      "dbov3ttt7fqc7388gfrg",
+      "dbp1pvgou4as73cst2n0"
+    ],
+    "finished_utc": [
+      "2026-11-09T16:16:17+00:00",
+      "2026-11-09T16:18:11+00:00",
+      "2026-11-09T19:21:59+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 37,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 68,
+          "sx": 28,
+          "cz": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.005859375,
+        0.02392578125
+      ],
+      "two_qubit_error_range": [
+        0.002189399317881896,
+        0.0026936117834812645
+      ]
+    }
+  },
+  "sentiment/fake_manila": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 1,
+    "sessions": [
+      "session1"
+    ],
+    "ideal_accuracy": 0.74,
+    "accuracy_per_run": [
+      0.73
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.664564384587978,
+        0.7867664526895944
+      ]
+    ],
+    "flips_per_run": [
+      8
+    ],
+    "expected_flips_per_run": 3.0653718011335824,
+    "p_value_flips": 0.003230571755563679,
+    "shift_per_run": [
+      -0.0208856
+    ],
+    "shift_pooled": -0.0208856,
+    "shift_pooled_ci": [
+      -0.0246440325,
+      -0.01667910375
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.73,
+        "device_only_correct": 3,
+        "ideal_only_correct": 5,
+        "mcnemar_p": 0.7265625,
+        "bias": -0.0208856,
+        "bias_ci": [
+          -0.024649577500000002,
+          -0.01668159875
+        ],
+        "flips": 8,
+        "p_value_flips": 0.003230571755563679
+      }
+    ],
+    "run_to_run_prediction_agreement": null,
+    "job_ids": [],
+    "finished_utc": [
+      "2026-11-09T16:18:18+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 24,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 48,
+          "sx": 24,
+          "cx": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.014399999999999968,
+        0.09640000000000004
+      ],
+      "two_qubit_error_range": [
+        0.008827712070629129,
+        0.01394038580879381
+      ]
+    }
+  },
+  "sentiment/fake_marrakesh": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 1,
+    "sessions": [
+      "session1"
+    ],
+    "ideal_accuracy": 0.74,
+    "accuracy_per_run": [
+      0.745
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.6803694869280502,
+        0.8003959701719726
+      ]
+    ],
+    "flips_per_run": [
+      3
+    ],
+    "expected_flips_per_run": 3.0653718011335824,
+    "p_value_flips": 0.6285848086588133,
+    "shift_per_run": [
+      -0.002702649999999997
+    ],
+    "shift_pooled": -0.002702649999999997,
+    "shift_pooled_ci": [
+      -0.004622302499999999,
+      -0.0006982637499999951
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.745,
+        "device_only_correct": 2,
+        "ideal_only_correct": 1,
+        "mcnemar_p": 1.0,
+        "bias": -0.002702649999999997,
+        "bias_ci": [
+          -0.0047181837499999935,
+          -0.0007629225000000024
+        ],
+        "flips": 3,
+        "p_value_flips": 0.6285848086588133
+      }
+    ],
+    "run_to_run_prediction_agreement": null,
+    "job_ids": [],
+    "finished_utc": [
+      "2026-11-09T16:18:17+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 37,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 68,
+          "sx": 28,
+          "cz": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.004150390625,
+        0.01123046875
+      ],
+      "two_qubit_error_range": [
+        0.001548074406909461,
+        0.003201528503065487
+      ]
+    }
+  },
+  "sentiment/ibm_marrakesh": {
+    "inputs": 200,
+    "shots": 1024,
+    "runs": 1,
+    "sessions": [
+      "session1"
+    ],
+    "ideal_accuracy": 0.74,
+    "accuracy_per_run": [
+      0.73
+    ],
+    "wilson_ci_per_run": [
+      [
+        0.664564384587978,
+        0.7867664526895944
+      ]
+    ],
+    "flips_per_run": [
+      4
+    ],
+    "expected_flips_per_run": 3.0653718011335824,
+    "p_value_flips": 0.3652910908287322,
+    "shift_per_run": [
+      -0.0035278499999999986
+    ],
+    "shift_pooled": -0.0035278499999999986,
+    "shift_pooled_ci": [
+      -0.005898262500000002,
+      -0.0012517087500000079
+    ],
+    "shift_pooled_two_level_ci": null,
+    "per_run": [
+      {
+        "accuracy": 0.73,
+        "device_only_correct": 1,
+        "ideal_only_correct": 3,
+        "mcnemar_p": 0.625,
+        "bias": -0.0035278499999999986,
+        "bias_ci": [
+          -0.006066073750000003,
+          -0.0009732225000000012
+        ],
+        "flips": 4,
+        "p_value_flips": 0.3652910908287322
+      }
+    ],
+    "run_to_run_prediction_agreement": null,
+    "job_ids": [
+      "dbov4itt7fqc7388ggog"
+    ],
+    "finished_utc": [
+      "2026-11-09T16:19:39+00:00"
+    ],
+    "calibration": {
+      "physical_qubits": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "compiled": {
+        "depth": 37,
+        "two_qubit_gates": 6,
+        "ops": {
+          "rz": 68,
+          "sx": 28,
+          "cz": 6,
+          "measure": 4,
+          "barrier": 1
+        }
+      },
+      "readout_error_range": [
+        0.005859375,
+        0.02392578125
+      ],
+      "two_qubit_error_range": [
+        0.002189399317881896,
+        0.0026936117834812645
+      ]
+    }
+  }
+}
