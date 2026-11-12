@@ -55,6 +55,14 @@ These test sets were used while designing the circuit, so the numbers above are 
 
 **Dequantization check** (`python -m benchmark.dequantize`; protocol [results/dequantization/PROTOCOL.md](results/dequantization/PROTOCOL.md), committed before running): because each feature is re-uploaded twice with R_Y, the QNN's output is exactly a trigonometric polynomial with frequencies {-2..2} per feature (verified: a least-squares fit in that basis reproduces the trained QNN to ~1e-15). A purely classical logistic regression on those 624 Fourier features, with the same inputs and training texts, scores 0.727 vs the QNN's 0.708 on the untouched CVE set (QNN classically matched; surrogate ahead, CI excludes 0), and 0.756 vs 0.766 on untouched sentiment (inconclusive, CI [-0.008, +0.029]), where plain logistic regression on the 4 features (0.769) beats both. [results/dequantization/dequantization.md](results/dequantization/dequantization.md)
 
+**10-seed sensitivity analysis** (`python -m benchmark.confirmatory --extend`, then `python -m benchmark.dequantize --extend`; specified in [results/confirmatory/EXTENSION_10SEEDS.md](results/confirmatory/EXTENSION_10SEEDS.md) and committed before running). Three seeds give a coarse seed component in the intervals, so we added seeds 3-9 with everything else unchanged. This deviates from the protocol; the 3-seed verdicts above remain the primary ones. With 10 seeds the verdicts are unchanged and the intervals are narrower:
+- Sentiment: QNN 0.766 vs tuned logistic regression 0.765, difference +0.001 [-0.011, +0.014]. Not confirmed.
+- CVE: QNN 0.711 vs tuned logistic regression 0.720, difference -0.009 [-0.016, -0.002]. Tie within +/-3 points confirmed, though the QNN is now reliably, if slightly, behind. The tuned SVM (0.727) is 1.5 points ahead [-0.022, -0.009].
+- Fourier surrogate: CVE 0.727 vs QNN 0.711, QNN minus surrogate -0.015 [-0.022, -0.010]. Classically matched.
+- Fourier surrogate: sentiment 0.753 vs QNN 0.766, +0.013 [-0.000, +0.026]. Still inconclusive, with the surrogate nominally behind the QNN; plain logistic regression on the same 4 features (0.765) matches the QNN.
+
+Reports: [results/confirmatory/confirmatory_10seeds.md](results/confirmatory/confirmatory_10seeds.md), [results/dequantization/dequantization_10seeds.md](results/dequantization/dequantization_10seeds.md)
+
 **Which design choice mattered** (`python -m benchmark.ablation`, breast cancer, 3 seeds): in a 2x2 of encoding and re-uploading, `ZZFeatureMap` costs 24 points with re-uploading (0.910 to 0.667) and 19 without (0.887 to 0.700); re-uploading adds 2.3 points to angle encoding. Every other single choice (readout, optimizer, exact vs sampled training, 2 or 6 qubits) moves accuracy by at most 1.4 points. [results/ablation.md](results/ablation.md)
 
 **Benchmark on smaller splits** (`python -m benchmark.run_benchmark`): one seed, 300 training and up to 200 test items, PCA for tabular data. The text-task numbers above supersede the text bars here.
@@ -119,6 +127,7 @@ python -m benchmark.ablation                           # circuit-design ablation
 python -m benchmark.cross_device                       # compare ibm_marrakesh, ibm_kingston, ibm_fez on 100 shared inputs (seconds)
 python -m benchmark.dequantize                         # classical Fourier surrogates of the QNN (~5 min, CPU)
 python -m benchmark.confirmatory                       # pre-registered test on untouched data (~45 min, CPU)
+python -m benchmark.confirmatory --extend              # 10-seed sensitivity analysis (~2 h, CPU); then benchmark.dequantize --extend
 
 # Scan dependencies for known CVEs (pip-audit)
 ./security/audit_deps.sh
