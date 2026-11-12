@@ -33,7 +33,9 @@ Frequency basis: integer vectors in {-2..2}^4, 312 non-zero up to sign (624 cos/
 | Random Fourier subset, k=32 | 0.737, 0.751, 0.764 | 0.751 | +0.006 [-0.019, +0.028] |
 | Random Fourier subset, k=128 | 0.766, 0.769, 0.766 | 0.767 | -0.011 [-0.025, +0.004] |
 
+C grid: [0.001, 0.01, 0.1, 1, 10, 100]; features unscaled (cos/sin in [-1, 1]), L2-regularised logistic regression.
 CV-chosen C per seed: {'Fourier surrogate, full spectrum (624 features)': [0.001, 0.001, 0.001], 'Random Fourier subset, k=8': [1, 0.1, 10], 'Random Fourier subset, k=32': [0.001, 0.1, 0.01], 'Random Fourier subset, k=128': [0.001, 0.001, 0.001]}
+5-fold CV accuracy at the chosen C, per seed: {'Fourier surrogate, full spectrum (624 features)': [0.7217, 0.7467, 0.7667], 'Random Fourier subset, k=8': [0.7233, 0.7483, 0.7567], 'Random Fourier subset, k=32': [0.7367, 0.735, 0.7583], 'Random Fourier subset, k=128': [0.73, 0.7467, 0.7717]}
 
 ## cve: confirmatory set (holdout), 13432 items
 
@@ -59,4 +61,6 @@ CV-chosen C per seed: {'Fourier surrogate, full spectrum (624 features)': [0.001
 | Random Fourier subset, k=32 | 0.704, 0.666, 0.695 | 0.688 | +0.010 [-0.007, +0.027] |
 | Random Fourier subset, k=128 | 0.703, 0.697, 0.690 | 0.697 | +0.002 [-0.020, +0.027] |
 
+C grid: [0.001, 0.01, 0.1, 1, 10, 100]; features unscaled (cos/sin in [-1, 1]), L2-regularised logistic regression.
 CV-chosen C per seed: {'Fourier surrogate, full spectrum (624 features)': [0.001, 0.001, 0.001], 'Random Fourier subset, k=8': [100, 0.001, 0.1], 'Random Fourier subset, k=32': [0.01, 10, 0.01], 'Random Fourier subset, k=128': [0.001, 0.001, 0.01]}
+5-fold CV accuracy at the chosen C, per seed: {'Fourier surrogate, full spectrum (624 features)': [0.7483, 0.7417, 0.755], 'Random Fourier subset, k=8': [0.7217, 0.74, 0.7467], 'Random Fourier subset, k=32': [0.735, 0.7417, 0.7567], 'Random Fourier subset, k=128': [0.7417, 0.7333, 0.7583]}
