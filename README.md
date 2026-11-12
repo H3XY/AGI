@@ -53,6 +53,8 @@ These test sets were used while designing the circuit, so the numbers above are 
 
 **Pre-registered confirmatory test** (`python -m benchmark.confirmatory`; protocol [results/confirmatory/PROTOCOL.md](results/confirmatory/PROTOCOL.md), committed before the data was downloaded): frozen system, scored once on untouched data (Rotten Tomatoes validation split; 13,432 NVD CVEs published May-Aug 2024). Sentiment: QNN 0.766 vs tuned logistic regression 0.769, difference -0.003 [-0.017, +0.011], so the expected gap was **not** confirmed. CVE: 0.708 vs 0.720, difference -0.011 [-0.024, +0.003], a tie within the pre-set +/-3-point margin; the tuned SVM (0.726) is 1.8 points ahead of the QNN. The QNN is not ahead of any baseline. [results/confirmatory/confirmatory.md](results/confirmatory/confirmatory.md)
 
+**Dequantization check** (`python -m benchmark.dequantize`; protocol [results/dequantization/PROTOCOL.md](results/dequantization/PROTOCOL.md), committed before running): because each feature is re-uploaded twice with R_Y, the QNN's output is exactly a trigonometric polynomial with frequencies {-2..2} per feature (verified: a least-squares fit in that basis reproduces the trained QNN to ~1e-15). A purely classical logistic regression on those 624 Fourier features, with the same inputs and training texts, scores 0.727 vs the QNN's 0.708 on the untouched CVE set (QNN classically matched; surrogate ahead, CI excludes 0), and 0.756 vs 0.766 on untouched sentiment (inconclusive, CI [-0.008, +0.029]), where plain logistic regression on the 4 features (0.769) beats both. [results/dequantization/dequantization.md](results/dequantization/dequantization.md)
+
 **Which design choice mattered** (`python -m benchmark.ablation`, breast cancer, 3 seeds): in a 2x2 of encoding and re-uploading, `ZZFeatureMap` costs 24 points with re-uploading (0.910 to 0.667) and 19 without (0.887 to 0.700); re-uploading adds 2.3 points to angle encoding. Every other single choice (readout, optimizer, exact vs sampled training, 2 or 6 qubits) moves accuracy by at most 1.4 points. [results/ablation.md](results/ablation.md)
 
 **Benchmark on smaller splits** (`python -m benchmark.run_benchmark`): one seed, 300 training and up to 200 test items, PCA for tabular data. The text-task numbers above supersede the text bars here.
@@ -115,6 +117,7 @@ python -m benchmark.hardware_study_report && python -m benchmark.hardware_study_
 python -m benchmark.uncertainty                        # seeds, tuned baselines, CIs (~40 min, CPU)
 python -m benchmark.ablation                           # circuit-design ablation (~20 min, CPU)
 python -m benchmark.cross_device                       # compare ibm_marrakesh, ibm_kingston, ibm_fez on 100 shared inputs (seconds)
+python -m benchmark.dequantize                         # classical Fourier surrogates of the QNN (~5 min, CPU)
 python -m benchmark.confirmatory                       # pre-registered test on untouched data (~45 min, CPU)
 
 # Scan dependencies for known CVEs (pip-audit)
