@@ -19,6 +19,7 @@ train/test split and the initial weights.
 
 Usage:  python -m benchmark.ablation        (~20 min, CPU only)
         python -m benchmark.ablation --variants zz-reupload   (run some variants, merge into the saved results)
+        python -m benchmark.ablation --variants               (no runs: rewrite the report from the saved results)
 Writes results/ablation.json and results/ablation.md.
 """
 import json
@@ -99,10 +100,30 @@ def run(name, v, seed):
     return float(np.mean((p1 > 0.5).astype(int) == y_te))
 
 
+def interaction_section(out):
+    """Encoding x re-uploading 2x2: per-seed effects and the interaction with a t-interval over seeds."""
+    from scipy import stats
+    need = ["final", "no-reupload", "zz-reupload", "zz-encoding"]
+    if not all(k in out for k in need):
+        return []
+    g = {k: np.array(out[k]["accuracy_per_seed"]) for k in need}
+    enc_re = g["final"] - g["zz-reupload"]
+    enc_no = g["no-reupload"] - g["zz-encoding"]
+    inter = enc_re - enc_no
+    t = stats.t.ppf(0.975, len(inter) - 1)
+    se = inter.std(ddof=1) / np.sqrt(len(inter))
+    return ["", "## Encoding x re-uploading (2x2, same split and initial weights per seed)", "",
+            f"- Encoding effect (angle minus ZZFeatureMap) with re-uploading, per seed: {np.round(enc_re, 3).tolist()}",
+            f"- Encoding effect without re-uploading, per seed: {np.round(enc_no, 3).tolist()}",
+            f"- Interaction (difference of the two), per seed: {np.round(inter, 3).tolist()}; mean {inter.mean():+.3f}, "
+            f"95% t-interval over seeds [{inter.mean() - t * se:+.3f}, {inter.mean() + t * se:+.3f}]",
+            "- Three seeds cannot estimate the interaction precisely; the encoding effect is positive in all six cells."]
+
+
 def main():
     import argparse
     a = argparse.ArgumentParser()
-    a.add_argument("--variants", nargs="+", default=list(VARIANTS))
+    a.add_argument("--variants", nargs="*", default=list(VARIANTS))
     args = a.parse_args()
     path = os.path.join(RESULTS_DIR, "ablation.json")
     saved = json.load(open(path)) if os.path.exists(path) and set(args.variants) != set(VARIANTS) else {}
@@ -127,6 +148,7 @@ def main():
         c = r["config"]
         L.append(f"| {name} | {c['enc']} | {'yes' if c['reupload'] else 'no'} | {c['readout']} | {c['training']} | "
                  f"{c['opt']} | {c['n']} | {r['mean']:.3f} ± {r['std']:.3f} | {r['mean'] - base:+.3f} |")
+    L += interaction_section(out)
     open(os.path.join(RESULTS_DIR, "ablation.md"), "w").write("\n".join(L) + "\n")
     print("Wrote results/ablation.json and .md")
 

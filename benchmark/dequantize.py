@@ -95,6 +95,7 @@ def run_task(task, W):
     models = ["Fourier surrogate, full spectrum (624 features)"] + [f"Random Fourier subset, k={k}" for k in KS]
     preds = {s: {m: [] for m in models} for s in sets}
     chosen = {m: [] for m in models}
+    cv_score = {m: [] for m in models}
     rng_k = np.random.default_rng(1)
     subsets = {k: rng_k.choice(len(W), k, replace=False) for k in KS}
     for seed in SEEDS:
@@ -103,10 +104,12 @@ def run_task(task, W):
         for m, Wm in zip(models, [W] + [W[subsets[k]] for k in KS]):
             clf = GridSearchCV(LogisticRegression(max_iter=5000), grid, cv=cv).fit(fourier(A_tr, Wm), y_tr)
             chosen[m].append(clf.best_params_["C"])
+            cv_score[m].append(round(float(clf.best_score_), 4))
             for s in sets:
                 preds[s][m].append(clf.predict(fourier(A[s], Wm)))
     rng = np.random.default_rng(0)
-    res = {"chosen_C": chosen}
+    res = {"chosen_C": chosen, "cv_accuracy_at_chosen_C": cv_score, "grid": GRID,
+           "scaling": "none: cos/sin features already lie in [-1, 1]; L2-regularised logistic regression (lbfgs)"}
     for s, (_, y) in sets.items():
         qc = (q[f"{s}|Quantum (QNN)"] == y).astype(float)
         lr = (q[f"{s}|Logistic regression, CV-tuned"] == y).astype(float)
@@ -158,7 +161,8 @@ def main():
                 ci = x["qnn_minus"]["Fourier surrogate, full spectrum (624 features)"]["two_level_ci"]
                 verdict = "classically matched (CI at or below +0.01)" if ci[1] <= 0.01 else ("surrogate below the QNN (CI above 0)" if ci[0] > 0 else "inconclusive")
                 L += ["", f"**{'Reading (same rule as the pre-registered one, applied post hoc)' if args.posthoc else 'Pre-registered reading'}:** {verdict}"]
-        L += ["", f"CV-chosen C per seed: {r['chosen_C']}"]
+        L += ["", f"C grid: {r['grid']}; features unscaled (cos/sin in [-1, 1]), L2-regularised logistic regression.",
+              f"CV-chosen C per seed: {r['chosen_C']}", f"5-fold CV accuracy at the chosen C, per seed: {r['cv_accuracy_at_chosen_C']}"]
     open(os.path.join(OUT, f"{name}.md"), "w").write("\n".join(L) + "\n")
     print("\n".join(L))
 

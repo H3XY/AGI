@@ -36,6 +36,37 @@
           0.001
         ]
       },
+      "cv_accuracy_at_chosen_C": {
+        "Fourier surrogate, full spectrum (624 features)": [
+          0.7217,
+          0.7467,
+          0.7667
+        ],
+        "Random Fourier subset, k=8": [
+          0.7233,
+          0.7483,
+          0.7567
+        ],
+        "Random Fourier subset, k=32": [
+          0.7367,
+          0.735,
+          0.7583
+        ],
+        "Random Fourier subset, k=128": [
+          0.73,
+          0.7467,
+          0.7717
+        ]
+      },
+      "grid": [
+        0.001,
+        0.01,
+        0.1,
+        1,
+        10,
+        100
+      ],
+      "scaling": "none: cos/sin features already lie in [-1, 1]; L2-regularised logistic regression (lbfgs)",
       "test": {
         "items": 1066,
         "accuracy": {
@@ -226,6 +257,37 @@
           0.01
         ]
       },
+      "cv_accuracy_at_chosen_C": {
+        "Fourier surrogate, full spectrum (624 features)": [
+          0.7483,
+          0.7417,
+          0.755
+        ],
+        "Random Fourier subset, k=8": [
+          0.7217,
+          0.74,
+          0.7467
+        ],
+        "Random Fourier subset, k=32": [
+          0.735,
+          0.7417,
+          0.7567
+        ],
+        "Random Fourier subset, k=128": [
+          0.7417,
+          0.7333,
+          0.7583
+        ]
+      },
+      "grid": [
+        0.001,
+        0.01,
+        0.1,
+        1,
+        10,
+        100
+      ],
+      "scaling": "none: cos/sin features already lie in [-1, 1]; L2-regularised logistic regression (lbfgs)",
       "test": {
         "items": 2424,
         "accuracy": {
