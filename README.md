@@ -3,8 +3,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24148924.svg)](https://doi.org/10.5281/zenodo.24148924)
 
 Archived on Zenodo. The badge's concept DOI always resolves to the latest version.
-To cite the exact code used in the paper, use v1.0.2:
-[10.5281/zenodo.24149645](https://doi.org/10.5281/zenodo.24149645) (commit `2c46075`).
+To cite the exact code used in the paper, use v1.0.3:
+[10.5281/zenodo.24149985](https://doi.org/10.5281/zenodo.24149985) (commit `a2bd3fd`).
 
 A small, honest quantum machine-learning project built with Qiskit. A 4-qubit
 quantum neural network (QNN) classifies text. It runs on a local simulator, on a
