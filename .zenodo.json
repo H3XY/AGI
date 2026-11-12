@@ -1,0 +1,11 @@
+{
+  "title": "H3XY/AGI: quantum text classifier with fair classical baselines and IBM hardware study",
+  "upload_type": "software",
+  "description": "Code, data pipelines, result files and IBM Quantum job identifiers for the classical-data part of \"Where Small Quantum Classifiers Help, and Where They Don't: Fair Baselines and Real-Hardware Results on IBM Heron\": a 4-qubit data re-uploading classifier on sentence embeddings (sentiment, CVE severity), tuned classical baselines, a pre-registered confirmatory evaluation on untouched data, a circuit-design ablation, and a 200-input hardware study on ibm_marrakesh with exact shot-noise statistics.",
+  "creators": [{"name": "Reddy, Vivek"}],
+  "license": "MIT",
+  "keywords": ["quantum machine learning", "qiskit", "benchmarking", "IBM Quantum", "CVE", "pre-registration"],
+  "related_identifiers": [
+    {"identifier": "https://github.com/H3XY/Entangle", "relation": "isSupplementedBy", "resource_type": "software"}
+  ]
+}
