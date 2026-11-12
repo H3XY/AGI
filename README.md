@@ -66,6 +66,7 @@ These test sets were used while designing the circuit, so the numbers above are 
 - **Accuracy:** no run differs significantly from noise-free simulation on the same inputs (exact McNemar p = 1, 0.07, 0.45 for CVE; 0.63 for sentiment) (CVE 0.685, 0.655 and 0.700 over three runs vs 0.685 noise-free; sentiment 0.730 vs 0.740). Prediction changes are at the edge of the exact shot-noise expectation (19 vs 13.3 expected for CVE over three runs, p = 0.055; p = 0.37 for sentiment), and repeated runs agree on 96% of predictions.
 - **Bias:** consistent in sign, varying in size. The device lowers mean P(class 1) in every run: per CVE run 0.0063 [0.0037, 0.0090] and 0.0053 [0.0025, 0.0081], then 0.0022 [-0.0002, 0.0046] three hours later under the same reported calibration (interval includes zero); pooled 0.0046 (two-level CI over runs and inputs [0.0016, 0.0076]). Sentiment: 0.0035 [0.0010, 0.0061].
 - **Noise models:** `FakeMarrakesh` (a snapshot of the same device) reproduces that bias; `FakeManilaV2` (an older 5-qubit device) overstates it about fivefold and changes significantly more predictions than shot noise allows.
+- **Other devices** (`python -m benchmark.cross_device`): one CVE run each on `ibm_kingston` and `ibm_fez`, on 100 of the same inputs. Accuracy again shows no significant change, and the output shift has the same sign on every device but a different size: Marrakesh -0.005, Kingston -0.009, Fez -0.015 (Fez significantly larger than both). `FakeFez` understates Fez's shift (-0.009), so a same-device noise model matched Marrakesh but not Fez. [results/hardware_study/cross_device.md](results/hardware_study/cross_device.md)
 
 Details, job IDs and the calibration snapshot: [results/hardware_study/report.md](results/hardware_study/report.md), [results/ibm_jobs.json](results/ibm_jobs.json). An earlier 40-input run per dataset ([results/benchmark.md](results/benchmark.md), [results/hardware_repeats_cve.md](results/hardware_repeats_cve.md), exact statistics in [results/uncertainty.md](results/uncertainty.md)) is superseded by this study.
 
@@ -113,6 +114,7 @@ python -m benchmark.hardware_study --runs 3            # real device; checks the
 python -m benchmark.hardware_study_report && python -m benchmark.hardware_study_figure
 python -m benchmark.uncertainty                        # seeds, tuned baselines, CIs (~40 min, CPU)
 python -m benchmark.ablation                           # circuit-design ablation (~20 min, CPU)
+python -m benchmark.cross_device                       # compare ibm_marrakesh, ibm_kingston, ibm_fez on 100 shared inputs (seconds)
 python -m benchmark.confirmatory                       # pre-registered test on untouched data (~45 min, CPU)
 
 # Scan dependencies for known CVEs (pip-audit)

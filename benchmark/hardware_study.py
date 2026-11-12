@@ -114,6 +114,8 @@ def main():
     a.add_argument("--fake-only", action="store_true")
     a.add_argument("--no-fake", action="store_true")
     a.add_argument("--seconds-per-circuit", type=float, default=SECONDS_PER_CIRCUIT)
+    a.add_argument("--fakes", nargs="+", default=["FakeMarrakesh", "FakeManilaV2"],
+                   help="local noise models from qiskit_ibm_runtime.fake_provider (free)")
     args = a.parse_args()
 
     from core.text_classifier import TextClassifier
@@ -135,8 +137,8 @@ def main():
         print(f"{task}: {len(y)} inputs, ideal accuracy {base['ideal_accuracy']:.3f}")
         targets = []
         if not args.no_fake:
-            from qiskit_ibm_runtime.fake_provider import FakeManilaV2, FakeMarrakesh
-            targets += [(FakeMarrakesh(), None), (FakeManilaV2(), None)]
+            from qiskit_ibm_runtime import fake_provider
+            targets += [(getattr(fake_provider, name)(), None) for name in args.fakes]
         if backend is not None:
             targets.append((backend, service))
         for b, svc in targets:
